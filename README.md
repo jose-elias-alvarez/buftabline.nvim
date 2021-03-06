@@ -3,6 +3,8 @@
 A low-config, minimal buffer tabline Neovim plugin written in Lua, shamelessly
 inspired by [vim-buftabline](https://github.com/ap/vim-buftabline).
 
+![buftabline](./screenshots/buftabline.png)
+
 ## Setup
 
 Install using your favorite plugin manager and call the following Lua code
