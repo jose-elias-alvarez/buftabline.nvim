@@ -145,7 +145,8 @@ another.
 
 ## Inspiration
 
-- [nvim-bufbar](https://github.com/ojroques/nvim-bufbar) by @ojroques, who
+- [nvim-bufbar](https://github.com/ojroques/nvim-bufbar) by
+  [@ojroques](https://github.com/ojroques), who
   directed me to his plugin and encouraged me to use it as a starting point. A
   large percentage of the code in this plugin comes from his (any and all
   terrible Lua code is all my own).
