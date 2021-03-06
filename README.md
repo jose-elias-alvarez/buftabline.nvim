@@ -137,7 +137,8 @@ your highlight groups, the plugin won't link them either way.)
 - Non-ordinal numbers. LSP servers and plugins constantly create and
   delete temporary buffers, so I don't personally see the point.
 - Vim support. Use [vim-buftabline](https://github.com/ap/vim-buftabline)!
-- Mouse support. Extensive visual customization.
+- Mouse support.
+- Extensive visual customization.
 
 Aside from these, I'm open to PRs and hope to continue to improve the plugin
 (primarily its code quality), but I don't think it'll change too much one way or
