@@ -20,14 +20,16 @@ can install and set up buftabline simultaneously:
 ```lua
 use {
     "jose-elias-alvarez/buftabline.nvim",
+    requires = {"kyazdani42/nvim-web-devicons"}, -- optional
     config = function() require("buftabline").setup {} end
 }
 ```
 
 ## Functionality
 
-buftabline shows your open buffers in your tabline, sorts them by (ordinal)
-number, and highlights the current buffer. That's pretty much it.
+buftabline shows your open buffers in your tabline with (optional) filetype
+icons, sorts them by (ordinal) number, and highlights the current buffer. That's
+pretty much it.
 
 For convenience, the plugin exposes 3 functions to interact with buffers in the
 tabline by using the buffer's ordinal number:
@@ -68,6 +70,7 @@ the following options (defaults shown):
 ```lua
 local options = {
     modifier = ":t",
+    icons = false,
     go_to_maps = true,
     kill_maps = false,
     custom_command = nil,
@@ -82,6 +85,13 @@ local options = {
 
 Allows modifying the format of each buffer in the tabline. See `:help filename-modifiers`.
 
+### icons
+
+Enables filetype icons via
+[nvim-web-devicons](https://github.com/kyazdani42/nvim-web-devicons). Even if
+you've installed nvim-web-devicons, you must explicitly enable icons (in case
+you don't want them in your tabline).
+
 ### go_to_maps
 
 Maps `<Leader>0-9` to the corresponding `go_to_buffer` command.
@@ -95,9 +105,8 @@ Maps `<Leader>c0-9` to the corresponding `kill_buffer` command.
 Defines the command that runs when calling `custom_command(number)`. Note that
 calling the function without defining a command will throw an error.
 
-A practical example: setting `custom_command` to `vertical sb` and calling
-`:lua require("buftabline").custom_command(2)` will open the 2nd buffer in your tabline in a vertical
-split.
+A practical example: setting `custom_command` to `vertical sb` and calling `:lua require("buftabline").custom_command(2)` will open the 2nd buffer in your
+tabline in a vertical split.
 
 ### custom_map_prefix
 
@@ -122,13 +131,13 @@ highlight group to `TabLineSel` and its normal buffer highlight group to
 `TabLineFill` for better compatibility with themes that don't specifically
 support its highlight groups.
 
-By default, this plugin will do the same, but you
-can disable linking by setting `no_link_hlgroups` to `false`. (If you've changed
-your highlight groups, the plugin won't link them either way.)
+By default, this plugin will do the same, but you can disable linking by setting
+`no_link_hlgroups` to `false`. (If you've changed your highlight groups, the
+plugin won't link them either way.)
 
 ## Goals
 
-- [ ] Add (optional) support for
+- [x] Add (optional) support for
       [nvim-web-devicons](https://github.com/kyazdani42/nvim-web-devicons)
 - [ ] Write unit tests
 
@@ -147,10 +156,9 @@ another.
 ## Inspiration
 
 - [nvim-bufbar](https://github.com/ojroques/nvim-bufbar) by
-  [@ojroques](https://github.com/ojroques), who
-  directed me to his plugin and encouraged me to use it as a starting point. A
-  large percentage of the code in this plugin comes from his (any and all
-  terrible Lua code is all my own).
+  [@ojroques](https://github.com/ojroques), who directed me to his plugin and
+  encouraged me to use it as a starting point. A large percentage of the code in
+  this plugin comes from his (any and all terrible Lua code is all my own).
 
 - [vim-buftabline](https://github.com/ap/vim-buftabline), the direct inspiration
   for this plugin and still a solid plugin if you don't mind Vimscript.

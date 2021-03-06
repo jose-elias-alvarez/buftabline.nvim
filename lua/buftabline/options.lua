@@ -1,5 +1,6 @@
 local options = {
     modifier = ":t",
+    icons = false,
     go_to_maps = true,
     kill_maps = false,
     custom_command = nil,

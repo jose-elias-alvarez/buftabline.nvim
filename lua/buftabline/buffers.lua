@@ -54,7 +54,8 @@ M.get_buffers = function()
                 current = bufinfo.bufnr == current_bufnr,
                 modifiable = vim.fn.getbufvar(bufinfo.bufnr, "&modifiable") == 1,
                 modified = vim.fn.getbufvar(bufinfo.bufnr, "&modified") == 1,
-                readonly = vim.fn.getbufvar(bufinfo.bufnr, "&readonly") == 1
+                readonly = vim.fn.getbufvar(bufinfo.bufnr, "&readonly") == 1,
+                filetype = vim.fn.getbufvar(bufinfo.bufnr, "&filetype")
             }
             if not last_timestamp or bufinfo.lastused > last_timestamp then
                 last_timestamp, last_buffer = bufinfo.lastused, buffer
