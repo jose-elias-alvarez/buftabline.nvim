@@ -92,6 +92,8 @@ Enables filetype icons via
 you've installed nvim-web-devicons, you must explicitly enable icons (in case
 you don't want them in your tabline).
 
+![devicons](./screenshots/devicons.png)
+
 ### go_to_maps
 
 Maps `<Leader>0-9` to the corresponding `go_to_buffer` command.
