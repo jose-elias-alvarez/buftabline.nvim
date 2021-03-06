@@ -89,8 +89,8 @@ Allows modifying the format of each buffer in the tabline. See `:help filename-m
 
 Enables filetype icons via
 [nvim-web-devicons](https://github.com/kyazdani42/nvim-web-devicons). Even if
-you've installed nvim-web-devicons, you must explicitly enable icons (in case
-you don't want them in your tabline).
+you've installed nvim-web-devicons, you must explicitly enable icons by setting
+this option to `true` (in case you don't want them in your tabline).
 
 ![devicons](./screenshots/devicons.png)
 
