@@ -36,17 +36,17 @@ tabline by using the buffer's ordinal number:
 
   Does what you'd imagine. By default, the plugin maps `<Leader>0-9` to the
   corresponding `go_to_buffer` command (`0` gets converted to `10`), but you can
-  disable this by setting `go_to_maps` to `false` in your setup function.
+  disable this by setting `go_to_maps` to `false` (see [Options](#options)).
 
 - `kill_buffer(number)`
 
   Again, self-explanatory. Not mapped by default, but you can have the plugin
-  map `<Leader>c0-9` by setting `kill_maps` to `true` (see **Options**).
+  map `<Leader>c0-9` by setting `kill_maps` to `true` (see [Options](#options)).
 
 - `custom_command(number)`
 
   By setting `custom_command` in your config, you can run an arbitrary command
-  on a specific buffer in your tabline. See **Options** for an example.
+  on a specific buffer in your tabline (see [Options](#options) for an example).
 
 You can call any of these functions directly from Vimscript:
 
