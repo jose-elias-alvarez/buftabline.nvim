@@ -20,7 +20,7 @@ local set_maps = function()
         iterate_maps(9, "<Leader><idx>",
                      ":lua require'buftabline'.go_to_buffer(<idx>)<CR>")
     end
-    if o().bd_maps then
+    if o().kill_maps then
         iterate_maps(9, "<Leader>c<idx>",
                      ":lua require'buftabline'.kill_buffer(<idx>)<CR>")
     end

@@ -1,7 +1,7 @@
 local options = {
     modifier = ":t",
     go_to_maps = true,
-    bd_maps = false,
+    kill_maps = false,
     custom_command = nil,
     custom_map_prefix = nil,
     hlgroup_current = "BufTabLineCurrent",
