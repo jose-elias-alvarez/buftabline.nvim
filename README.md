@@ -62,6 +62,13 @@ Or set custom maps:
 nnoremap 1 <cmd> lua require("buftabline").go_to_buffer(1)<CR>
 ```
 
+The plugin exposes the underlying function `buftarget(number, command)` and
+allows access to enable creating more custom commands:
+
+```vim
+:lua require("buftabline").buftarget(1, "rightbelow sb")
+```
+
 ## Options
 
 For most users, everything should work out-of-the-box, but the plugin exposes
