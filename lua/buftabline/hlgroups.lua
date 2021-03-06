@@ -14,8 +14,12 @@ M.set_hlgroup = function(text, current)
 end
 
 M.link_hlgroups = function()
-    vim.cmd("hi default link " .. o().hlgroup_current .. " TabLineSel")
-    vim.cmd("hi default link " .. o().hlgroup_normal .. " TabLineFill")
+    if o().hlgroup_current == "BufTabLineCurrent" then
+        vim.cmd("hi default link BufTabLineCurrent TabLineSel")
+    end
+    if o().hlgroup_normal == "BufTabLineFill" then
+        vim.cmd("hi default link BufTabLineFill TabLineFill")
+    end
 end
 
 return M
