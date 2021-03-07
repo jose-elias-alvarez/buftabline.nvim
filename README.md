@@ -69,6 +69,9 @@ allows access to enable creating more custom commands:
 :lua require("buftabline").buftarget(1, "rightbelow sb")
 ```
 
+Finally, the plugin wraps a command, `ToggleBuftabline`, to do what you'd
+imagine (useful for smaller screens / focus sessions).
+
 ## Options
 
 For most users, everything should work out-of-the-box, but the plugin exposes

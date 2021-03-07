@@ -47,6 +47,14 @@ function M.custom_command(num)
     buftarget(num, cmd)
 end
 
+M.toggle_tabline = function()
+    if vim.o.showtabline > 0 then
+        vim.o.showtabline = 0
+    else
+        vim.o.showtabline = 2
+    end
+end
+
 function M.setup(user_options)
     o.set_options(user_options)
     set_bufferline()
