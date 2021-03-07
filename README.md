@@ -81,6 +81,7 @@ the following options (defaults shown):
 local options = {
     modifier = ":t",
     icons = false,
+    start_hidden = false,
     go_to_maps = true,
     kill_maps = false,
     custom_command = nil,
@@ -103,6 +104,11 @@ you've installed nvim-web-devicons, you must explicitly enable icons by setting
 this option to `true` (in case you don't want them in your tabline).
 
 ![devicons](./screenshots/devicons.png)
+
+### start_hidden
+
+Hides the tabline when Neovim starts by setting `showtabline` to `0`. Disabled
+by default, but potentially useful in combination with `ToggleBuftabline`.
 
 ### go_to_maps
 
