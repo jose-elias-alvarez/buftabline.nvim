@@ -1,5 +1,4 @@
-local o = require("buftabline.options").get_options
-local fmt = string.format
+local o = require("buftabline.options")
 
 local exclude_buffer = function(bufnr)
     return
@@ -20,16 +19,16 @@ local M = {}
 M.get_name = function(buffer)
     local name = "[No Name]"
     local index = buffer.index
-    local modifier = o().modifier
+    local modifier = o.get().modifier
     if vim.fn.bufname(buffer.bufnr) ~= "" then
         name = vim.fn.fnamemodify(vim.fn.bufname(buffer.bufnr), modifier)
     end
 
     local flags = get_flags(buffer)
     if flags ~= "" then
-        name = fmt("%d: %s %s", index, name, flags)
+        name = string.format("%d: %s %s", index, name, flags)
     else
-        name = fmt("%d: %s", index, name)
+        name = string.format("%d: %s", index, name)
     end
     return name
 end

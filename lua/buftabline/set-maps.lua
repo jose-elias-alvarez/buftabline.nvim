@@ -1,8 +1,8 @@
-local o = require("buftabline.options").get_options
+local o = require("buftabline.options")
 
 local map = function(mode, key, command)
-    local options = {silent = true, nowait = true, noremap = true}
-    vim.api.nvim_set_keymap(mode, key, command, options)
+    local opts = {silent = true, nowait = true, noremap = true}
+    vim.api.nvim_set_keymap(mode, key, command, opts)
 end
 
 local replace_idx = function(raw, idx)
@@ -16,16 +16,16 @@ local iterate_maps = function(max, key, command)
 end
 
 local set_maps = function()
-    if o().go_to_maps then
+    if o.get().go_to_maps then
         iterate_maps(9, "<Leader><idx>",
                      ":lua require'buftabline'.go_to_buffer(<idx>)<CR>")
     end
-    if o().kill_maps then
+    if o.get().kill_maps then
         iterate_maps(9, "<Leader>c<idx>",
                      ":lua require'buftabline'.kill_buffer(<idx>)<CR>")
     end
-    if o().custom_command and o().custom_map_prefix then
-        iterate_maps(9, "<Leader>" .. o().custom_map_prefix .. "<idx>",
+    if o.get().custom_command and o.get().custom_map_prefix then
+        iterate_maps(9, "<Leader>" .. o.get().custom_map_prefix .. "<idx>",
                      ":lua require'buftabline'.custom_command(<idx>)<CR>")
     end
 end

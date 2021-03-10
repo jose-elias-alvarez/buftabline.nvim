@@ -12,11 +12,11 @@ local options = {
 }
 
 local M = {}
-M.set_options = function(user_options)
+M.set = function(user_options)
     options = vim.tbl_extend("force", options, user_options)
 end
 
-M.get_options = function() return options end
+M.get = function() return options end
 
 return M
 
