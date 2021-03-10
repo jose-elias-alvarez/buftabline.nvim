@@ -86,9 +86,8 @@ local options = {
     kill_maps = false,
     custom_command = nil,
     custom_map_prefix = nil,
-    hlgroup_current = "BufTabLineCurrent",
-    hlgroup_normal = "BufTabLineFill",
-    no_link_hlgroups = false
+    hlgroup_current = "TabLineSel",
+    hlgroup_normal = "TabLineFill",
 }
 ```
 
@@ -141,17 +140,6 @@ Sets the highlight group for the current buffer.
 ### hlgroup_normal
 
 Sets the highlight group for normal (non-current) buffers.
-
-### no_link_hlgroups
-
-[vim-buftabline](https://github.com/ap/vim-buftabline) links its current buffer
-highlight group to `TabLineSel` and its normal buffer highlight group to
-`TabLineFill` for better compatibility with themes that don't specifically
-support its highlight groups.
-
-By default, this plugin will do the same, but you can disable linking by setting
-`no_link_hlgroups` to `false`. (If you've changed your highlight groups, the
-plugin won't link them either way.)
 
 ## Goals
 

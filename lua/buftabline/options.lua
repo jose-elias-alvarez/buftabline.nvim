@@ -6,9 +6,8 @@ local options = {
     kill_maps = false,
     custom_command = nil,
     custom_map_prefix = nil,
-    hlgroup_current = "BufTabLineCurrent",
-    hlgroup_normal = "BufTabLineFill",
-    no_link_hlgroups = false
+    hlgroup_current = "TabLineSel",
+    hlgroup_normal = "TabLineFill"
 }
 
 local M = {}
