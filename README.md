@@ -86,9 +86,8 @@ local options = {
     kill_maps = false,
     custom_command = nil,
     custom_map_prefix = nil,
-    hlgroup_current = "BufTabLineCurrent",
-    hlgroup_normal = "BufTabLineFill",
-    no_link_hlgroups = false
+    hlgroup_current = "TabLineSel",
+    hlgroup_normal = "TabLineFill",
 }
 ```
 
@@ -142,23 +141,6 @@ Sets the highlight group for the current buffer.
 
 Sets the highlight group for normal (non-current) buffers.
 
-### no_link_hlgroups
-
-[vim-buftabline](https://github.com/ap/vim-buftabline) links its current buffer
-highlight group to `TabLineSel` and its normal buffer highlight group to
-`TabLineFill` for better compatibility with themes that don't specifically
-support its highlight groups.
-
-By default, this plugin will do the same, but you can disable linking by setting
-`no_link_hlgroups` to `false`. (If you've changed your highlight groups, the
-plugin won't link them either way.)
-
-## Goals
-
-- [x] Add (optional) support for
-      [nvim-web-devicons](https://github.com/kyazdani42/nvim-web-devicons)
-- [ ] Write unit tests
-
 ## Non-goals
 
 - Non-ordinal numbers. LSP servers and plugins constantly create and
@@ -167,9 +149,15 @@ plugin won't link them either way.)
 - Mouse support.
 - Extensive visual customization.
 
-Aside from these, I'm open to PRs and hope to continue to improve the plugin
-(primarily its code quality), but I don't think it'll change too much one way or
-another.
+Aside from these, I'm open to PRs and hope to continue to improve the plugin,
+but I don't think it'll change too much one way or another.
+
+## Tests
+
+I've covered most of the code with tests written with
+[plenary.nvim](https://github.com/nvim-lua/plenary.nvim)'s test harness. Running
+`./test.sh` from the plugin's root directory will run the test suite and exit
+with a relevant exit code.
 
 ## Inspiration
 

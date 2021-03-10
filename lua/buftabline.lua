@@ -1,9 +1,8 @@
 local b = require("buftabline.buffers")
-local h = require("buftabline.hlgroups")
 local o = require("buftabline.options")
-local set_bufferline = require("buftabline.bufferline")
-local set_maps = require("buftabline.maps")
-local fmt = string.format
+local set_bufferline = require("buftabline.set-bufferline")
+local set_maps = require("buftabline.set-maps")
+local set_hlgroup = require("buftabline.set-hlgroup")
 local status, devicons = pcall(require, "nvim-web-devicons")
 
 local M = {}
@@ -11,16 +10,16 @@ M.build_bufferline = function()
     local buffers = b.get_buffers()
     local bufferline, buflist = {}, {}
     for _, buffer in ipairs(buffers) do
-        local bufname = fmt(" %s ", b.get_name(buffer))
-        table.insert(buflist, h.set_hlgroup(bufname, buffer.current))
-        if o.get_options().icons then
+        local bufname = string.format(" %s ", b.get_name(buffer))
+        table.insert(buflist, set_hlgroup(bufname, buffer.current))
+        if o.get().icons then
             if status == false then
                 error("nvim-web-devicons is not installed")
             end
             local icon = devicons.get_icon(vim.fn.bufname(buffer.bufnr),
                                            buffer.filetype)
             if (icon) then
-                table.insert(buflist, h.set_hlgroup(icon .. " ", buffer.current))
+                table.insert(buflist, set_hlgroup(icon .. " ", buffer.current))
             end
         end
 
@@ -39,27 +38,22 @@ local buftarget = function(number, command)
 end
 M.buftarget = buftarget
 
-function M.go_to_buffer(num) buftarget(num, "buffer") end
-function M.kill_buffer(num) buftarget(num, "bd") end
-function M.custom_command(num)
-    local cmd = o.get_options().custom_command
-    if cmd == nil then error("custom command not set") end
+M.go_to_buffer = function(num) buftarget(num, "buffer") end
+M.kill_buffer = function(num) buftarget(num, "bd") end
+M.custom_command = function(num)
+    local cmd = o.get().custom_command
+    if not cmd then error("custom command not set") end
     buftarget(num, cmd)
 end
 
 M.toggle_tabline = function()
-    if vim.o.showtabline > 0 then
-        vim.o.showtabline = 0
-    else
-        vim.o.showtabline = 2
-    end
+    vim.o.showtabline = vim.o.showtabline > 0 and 0 or 2
 end
 
-function M.setup(user_options)
-    o.set_options(user_options)
+M.setup = function(user_options)
+    o.set(user_options)
     set_bufferline()
     set_maps()
-    if not o.get_options().no_link_hlgroups then h.link_hlgroups() end
 end
 
 return M
