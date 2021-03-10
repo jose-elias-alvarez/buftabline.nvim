@@ -141,12 +141,6 @@ Sets the highlight group for the current buffer.
 
 Sets the highlight group for normal (non-current) buffers.
 
-## Goals
-
-- [x] Add (optional) support for
-      [nvim-web-devicons](https://github.com/kyazdani42/nvim-web-devicons)
-- [x] Write unit tests
-
 ## Non-goals
 
 - Non-ordinal numbers. LSP servers and plugins constantly create and
