@@ -24,11 +24,12 @@ M.get_name = function(buffer)
         name = vim.fn.fnamemodify(vim.fn.bufname(buffer.bufnr), modifier)
     end
 
+    local index_format = o.get().index_format
     local flags = get_flags(buffer)
     if flags ~= "" then
-        name = string.format("%d: %s %s", index, name, flags)
+        name = string.format(index_format .. "%s %s", index, name, flags)
     else
-        name = string.format("%d: %s", index, name)
+        name = string.format(index_format .. "%s", index, name)
     end
     return name
 end

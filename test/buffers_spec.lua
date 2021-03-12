@@ -1,5 +1,6 @@
 local b = require("buftabline.buffers")
 local u = require("test.utils")
+local o = require("buftabline.options")
 
 local reset = function() vim.cmd("bufdo bwipeout!") end
 
@@ -33,6 +34,17 @@ describe("get_name", function()
         local name = b.get_name(buffers[1])
 
         assert.equals(name, "1: test [+]")
+    end)
+
+    it("should format index according to index_format", function()
+        reset()
+        o.set({index_format = "%d. "})
+        vim.cmd("e test")
+        local buffers = b.get_buffers()
+
+        local name = b.get_name(buffers[1])
+
+        assert.equals(name, "1. test")
     end)
 end)
 

@@ -86,6 +86,7 @@ the following options (defaults shown):
 ```lua
 local options = {
     modifier = ":t",
+    index_format = "%d: ",
     icons = false,
     start_hidden = false,
     go_to_maps = true,
@@ -101,12 +102,23 @@ local options = {
 
 Allows modifying the format of each buffer in the tabline. See `:help filename-modifiers`.
 
+### index_format
+
+Allows modifying the format of the index shown before each file's name in the
+tabline. Lua's `string.format` function uses [C
+directives](http://www.cplusplus.com/reference/cstdio/printf/), and you can also
+change spacing and punctuation.
+
+For example, setting `index_format = "(%d) "` will format your tabs like this:
+
+![index_format](./screenshots/index_format.png)
+
 ### icons
 
 Enables filetype icons via
 [nvim-web-devicons](https://github.com/kyazdani42/nvim-web-devicons). Even if
 you've installed nvim-web-devicons, you must explicitly enable icons by setting
-this option to `true` (in case you don't want them in your tabline).
+this option to `true`, in case you don't want them in your tabline.
 
 ![devicons](./screenshots/devicons.png)
 
