@@ -10,7 +10,7 @@ M.build_bufferline = function()
     local buffers = b.get_buffers()
     local bufferline, buflist = {}, {}
     for _, buffer in ipairs(buffers) do
-        local bufname = string.format(" %s ", b.get_name(buffer))
+        local bufname = string.format(b.get_bufname_base(), b.get_name(buffer))
         table.insert(buflist, set_hlgroup(bufname, buffer.current))
         if o.get().icons then
             if status == false then

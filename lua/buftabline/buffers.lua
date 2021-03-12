@@ -67,5 +67,17 @@ M.get_buffers = function()
     return buffers
 end
 
+M.get_bufname_base = function()
+    local bufname_base = {"%s"}
+    local padding = o.get().padding
+    if padding then
+        for _ = 1, padding do
+            table.insert(bufname_base, " ")
+            table.insert(bufname_base, 1, " ")
+        end
+    end
+    return table.concat(bufname_base)
+end
+
 return M
 
