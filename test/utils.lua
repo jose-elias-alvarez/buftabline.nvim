@@ -1,6 +1,6 @@
 local M = {}
 
-function deepcopy(original)
+local function deepcopy(original)
     local original_type = type(original)
     local copy
     if original_type == "table" then
@@ -16,7 +16,7 @@ function deepcopy(original)
 end
 M.deepcopy = deepcopy
 
-function tablelength(table)
+local function tablelength(table)
     local count = 0
     for _ in pairs(table) do count = count + 1 end
     return count

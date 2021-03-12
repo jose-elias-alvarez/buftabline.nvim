@@ -1,5 +1,6 @@
 local options = {
     modifier = ":t",
+    index_format = "%d: ",
     icons = false,
     start_hidden = false,
     go_to_maps = true,

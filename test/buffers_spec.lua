@@ -1,7 +1,8 @@
 local b = require("buftabline.buffers")
 local u = require("test.utils")
+local o = require("buftabline.options")
 
-local reset = function() vim.cmd("bufdo bwipeout!") end
+local reset = function() vim.cmd("bufdo! bwipeout!") end
 
 describe("get_name", function()
     it("should return modifier + No Name when buffer name isn't set", function()
@@ -16,23 +17,34 @@ describe("get_name", function()
 
     it("should return modifier + buffer name", function()
         reset()
-        vim.cmd("e test")
+        vim.cmd("e testfile")
         local buffers = b.get_buffers()
 
         local name = b.get_name(buffers[1])
 
-        assert.equals(name, "1: test")
+        assert.equals(name, "1: testfile")
     end)
 
     it("should return modifier + buffer name + flags", function()
         reset()
-        vim.cmd("e test")
+        vim.cmd("e testfile")
         vim.cmd("normal itestcontent")
         local buffers = b.get_buffers()
 
         local name = b.get_name(buffers[1])
 
-        assert.equals(name, "1: test [+]")
+        assert.equals(name, "1: testfile [+]")
+    end)
+
+    it("should format index according to index_format", function()
+        reset()
+        o.set({index_format = "%d. "})
+        vim.cmd("e testfile")
+        local buffers = b.get_buffers()
+
+        local name = b.get_name(buffers[1])
+
+        assert.equals(name, "1. testfile")
     end)
 end)
 
