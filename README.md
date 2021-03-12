@@ -87,6 +87,7 @@ the following options (defaults shown):
 local options = {
     modifier = ":t",
     index_format = "%d: ",
+    padding = 1,
     icons = false,
     start_hidden = false,
     go_to_maps = true,
@@ -112,6 +113,11 @@ change spacing and punctuation.
 For example, setting `index_format = "(%d) "` will format your tabs like this:
 
 ![index_format](./screenshots/index_format.png)
+
+### padding
+
+Each digit of `padding` adds a space around each side of each tab. Set to `0` or
+`false` to disable padding entirely.
 
 ### icons
 

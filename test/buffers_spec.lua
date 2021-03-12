@@ -71,3 +71,21 @@ describe("get_buffers", function()
         assert.equals(buffers[5].current, true)
     end)
 end)
+
+describe("get_bufname_base", function()
+    it("should remove padding around base when padding = 0", function()
+        o.set({padding = 0})
+
+        local base = b.get_bufname_base()
+
+        assert.equals(base, "%s")
+    end)
+
+    it("should add one space around base for each digit of padding", function()
+        o.set({padding = 2})
+
+        local base = b.get_bufname_base()
+
+        assert.equals(base, "  %s  ")
+    end)
+end)
