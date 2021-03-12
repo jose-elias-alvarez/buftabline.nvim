@@ -1,3 +1,9 @@
+<!-- markdownlint-configure-file
+{
+  "line-length": false
+}
+-->
+
 # buftabline.nvim
 
 A low-config, minimalistic buffer tabline Neovim plugin written in Lua,
@@ -69,8 +75,8 @@ allows access to enable creating more custom commands:
 :lua require("buftabline").buftarget(1, "rightbelow sb")
 ```
 
-Finally, the plugin wraps a command, `ToggleBuftabline`, to do what you'd
-imagine (useful for smaller screens / focus sessions).
+The plugin also wraps a command, `ToggleBuftabline`, to do what you'd imagine
+(useful for smaller screens / focus sessions).
 
 ## Options
 
