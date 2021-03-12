@@ -2,29 +2,13 @@ local b = require("buftabline.buffers")
 local o = require("buftabline.options")
 local set_bufferline = require("buftabline.set-bufferline")
 local set_maps = require("buftabline.set-maps")
-local set_hlgroup = require("buftabline.set-hlgroup")
-local status, devicons = pcall(require, "nvim-web-devicons")
 
 local M = {}
 M.build_bufferline = function()
-    local buffers = b.get_buffers()
-    local bufferline, buflist = {}, {}
-    for _, buffer in ipairs(buffers) do
-        local bufname = string.format(b.get_bufname_base(), b.get_name(buffer))
-        table.insert(buflist, set_hlgroup(bufname, buffer.current))
-        if o.get().icons then
-            if status == false then
-                error("nvim-web-devicons is not installed")
-            end
-            local icon = devicons.get_icon(vim.fn.bufname(buffer.bufnr),
-                                           buffer.filetype)
-            if (icon) then
-                table.insert(buflist, set_hlgroup(icon .. " ", buffer.current))
-            end
-        end
-
+    local bufferline = {}
+    for _, buffer in ipairs(b.get_buffers()) do
+        table.insert(bufferline, b.generate_tab(buffer))
     end
-    table.insert(bufferline, table.concat(buflist))
     return table.concat(bufferline)
 end
 

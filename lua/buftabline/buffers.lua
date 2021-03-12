@@ -1,4 +1,6 @@
 local o = require("buftabline.options")
+local set_hlgroup = require("buftabline.set-hlgroup")
+local status, devicons = pcall(require, "nvim-web-devicons")
 
 local exclude_buffer = function(bufnr)
     return
@@ -15,8 +17,7 @@ local get_flags = function(buffer)
 end
 
 local M = {}
-
-M.get_name = function(buffer)
+local get_name = function(buffer)
     local name = "[No Name]"
     local index = buffer.index
     local modifier = o.get().modifier
@@ -33,6 +34,20 @@ M.get_name = function(buffer)
     end
     return name
 end
+M.get_name = get_name
+
+local get_bufname_base = function()
+    local bufname_base = {"%s"}
+    local padding = o.get().padding
+    if padding then
+        for _ = 1, padding do
+            table.insert(bufname_base, " ")
+            table.insert(bufname_base, 1, " ")
+        end
+    end
+    return table.concat(bufname_base)
+end
+M.get_bufname_base = get_bufname_base
 
 M.get_buf_numbers = function()
     local numbers = {}
@@ -67,16 +82,23 @@ M.get_buffers = function()
     return buffers
 end
 
-M.get_bufname_base = function()
-    local bufname_base = {"%s"}
-    local padding = o.get().padding
-    if padding then
-        for _ = 1, padding do
-            table.insert(bufname_base, " ")
-            table.insert(bufname_base, 1, " ")
+local get_icon = function(buffer)
+    if status == false then error("nvim-web-devicons is not installed") end
+    return devicons.get_icon(vim.fn.bufname(buffer.bufnr), buffer.filetype)
+end
+
+M.generate_tab = function(buffer)
+    local tab = {}
+    local bufname = string.format(get_bufname_base(), get_name(buffer))
+    table.insert(tab, set_hlgroup(bufname, buffer.current))
+
+    if o.get().icons then
+        local icon = get_icon(buffer)
+        if (icon) then
+            table.insert(tab, set_hlgroup(icon .. " ", buffer.current))
         end
     end
-    return table.concat(bufname_base)
+    return table.concat(tab)
 end
 
 return M
