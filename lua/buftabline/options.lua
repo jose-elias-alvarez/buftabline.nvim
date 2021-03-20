@@ -4,6 +4,7 @@ local options = {
     padding = 1,
     icons = false,
     start_hidden = false,
+    disable_commands = false,
     go_to_maps = true,
     kill_maps = false,
     custom_command = nil,

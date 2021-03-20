@@ -2,6 +2,7 @@ local b = require("buftabline.buffers")
 local o = require("buftabline.options")
 local set_bufferline = require("buftabline.set-bufferline")
 local set_maps = require("buftabline.set-maps")
+local add_commands = require("buftabline.add-commands")
 
 local M = {}
 M.build_bufferline = function()
@@ -48,6 +49,7 @@ M.setup = function(user_options)
     o.set(user_options)
     set_bufferline()
     set_maps()
+    add_commands()
 end
 
 return M
