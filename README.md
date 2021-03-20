@@ -75,8 +75,12 @@ allows access to enable creating more custom commands:
 :lua require("buftabline").buftarget(1, "rightbelow sb")
 ```
 
-The plugin also wraps a command, `ToggleBuftabline`, to do what you'd imagine
-(useful for smaller screens / focus sessions).
+Finally, the plugin adds the following Vim commands:
+
+- `:ToggleBuftabline` (useful for smaller screens / focus sessions)
+
+- `:BufNext` and `:BufPrev` (similar to `:bnext` and `:bprev`, but they skip
+  over invisible buffers)
 
 ## Options
 

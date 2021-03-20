@@ -49,12 +49,20 @@ local get_bufname_base = function()
 end
 M.get_bufname_base = get_bufname_base
 
-M.get_buf_numbers = function()
+local get_buf_numbers = function()
     local numbers = {}
     for i, bufinfo in ipairs(vim.fn.getbufinfo({buflisted = 1})) do
         numbers[i] = bufinfo.bufnr
     end
     return numbers
+end
+M.get_buf_numbers = get_buf_numbers
+
+M.get_current_buf_number = function()
+    local current_bufnr = vim.fn.bufnr()
+    for i, v in ipairs(get_buf_numbers()) do
+        if v == current_bufnr then return i end
+    end
 end
 
 M.get_buffers = function()

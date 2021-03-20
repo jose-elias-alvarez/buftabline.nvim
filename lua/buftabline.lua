@@ -30,6 +30,16 @@ M.custom_command = function(num)
     buftarget(num, cmd)
 end
 
+M.next_buffer = function()
+    local next = b.get_current_buf_number() + 1
+    buftarget(b.get_buf_numbers()[next] and next or 1, "buffer")
+end
+M.prev_buffer = function()
+    local prev = b.get_current_buf_number() - 1
+    buftarget(b.get_buf_numbers()[prev] and prev or (#b.get_buf_numbers()),
+              "buffer")
+end
+
 M.toggle_tabline = function()
     vim.o.showtabline = vim.o.showtabline > 0 and 0 or 2
 end
