@@ -83,3 +83,57 @@ describe("build_bufferline", function()
             assert.has_error(function() buftabline.build_bufferline() end)
         end)
 end)
+
+describe("next_buffer", function()
+    it("should target next buffer", function()
+        reset()
+        for i = 1, 5 do vim.cmd("e" .. i) end
+        local buf_numbers = b.get_buf_numbers()
+        vim.cmd("buffer " .. buf_numbers[3])
+
+        buftabline.next_buffer()
+        local current_buf_number = b.get_current_buf_number()
+
+        assert.equals(current_buf_number, 4)
+    end)
+
+    it("should wrap and target 1st buffer when current buffer is last buffer",
+       function()
+        reset()
+        for i = 1, 5 do vim.cmd("e" .. i) end
+        local buf_numbers = b.get_buf_numbers()
+        vim.cmd("buffer " .. buf_numbers[5])
+
+        buftabline.next_buffer()
+        local current_buf_number = b.get_current_buf_number()
+
+        assert.equals(current_buf_number, 1)
+    end)
+end)
+
+describe("prev_buffer", function()
+    it("should target previous buffer", function()
+        reset()
+        for i = 1, 5 do vim.cmd("e" .. i) end
+        local buf_numbers = b.get_buf_numbers()
+        vim.cmd("buffer " .. buf_numbers[3])
+
+        buftabline.prev_buffer()
+        local current_buf_number = b.get_current_buf_number()
+
+        assert.equals(current_buf_number, 2)
+    end)
+
+    it("should wrap and target last buffer when current buffer is first buffer",
+       function()
+        reset()
+        for i = 1, 5 do vim.cmd("e" .. i) end
+        local buf_numbers = b.get_buf_numbers()
+        vim.cmd("buffer " .. buf_numbers[1])
+
+        buftabline.prev_buffer()
+        local current_buf_number = b.get_current_buf_number()
+
+        assert.equals(current_buf_number, 5)
+    end)
+end)

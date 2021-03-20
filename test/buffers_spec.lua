@@ -59,6 +59,19 @@ describe("get_buf_numbers", function()
     end)
 end)
 
+describe("get_current_buf_number", function()
+    it("should return current buffer's ordinal number", function()
+        reset()
+        for i = 1, 5 do vim.cmd("e" .. i) end
+        local buf_numbers = b.get_buf_numbers()
+
+        vim.cmd("buffer " .. buf_numbers[3])
+        local current_buf_number = b.get_current_buf_number()
+
+        assert.equals(current_buf_number, 3)
+    end)
+end)
+
 describe("get_buffers", function()
     it("should get table of open buffers and set current buffer", function()
         reset()

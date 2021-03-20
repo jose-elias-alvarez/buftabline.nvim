@@ -75,8 +75,12 @@ allows access to enable creating more custom commands:
 :lua require("buftabline").buftarget(1, "rightbelow sb")
 ```
 
-The plugin also wraps a command, `ToggleBuftabline`, to do what you'd imagine
-(useful for smaller screens / focus sessions).
+Finally, the plugin adds the following Vim commands:
+
+- `:ToggleBuftabline` (useful for smaller screens / focus sessions)
+
+- `:BufNext` and `:BufPrev` (similar to `:bnext` and `:bprev`, but they skip
+  over invisible buffers)
 
 ## Options
 
@@ -90,6 +94,7 @@ local options = {
     padding = 1,
     icons = false,
     start_hidden = false,
+    disable_commands = false,
     go_to_maps = true,
     kill_maps = false,
     custom_command = nil,
@@ -132,6 +137,10 @@ this option to `true`, in case you don't want them in your tabline.
 
 Hides the tabline when Neovim starts by setting `showtabline` to `0`. Disabled
 by default, but potentially useful in combination with `ToggleBuftabline`.
+
+### disable_commands
+
+Stops the plugin from creating commands in case you want to define your own.
 
 ### go_to_maps
 
