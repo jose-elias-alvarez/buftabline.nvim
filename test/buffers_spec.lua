@@ -1,5 +1,5 @@
 local b = require("buftabline.buffers")
-local u = require("test.utils")
+local u = require("buftabline.utils")
 local o = require("buftabline.options")
 
 local reset = function() vim.cmd("bufdo! bwipeout!") end

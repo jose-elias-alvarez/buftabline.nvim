@@ -1,5 +1,5 @@
 local o = require("buftabline.options")
-local u = require("test.utils")
+local u = require("buftabline.utils")
 
 local defaults = u.deepcopy(o.get())
 
