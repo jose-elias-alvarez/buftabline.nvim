@@ -78,7 +78,7 @@ M.get_buffers = function()
                 modifiable = vim.fn.getbufvar(bufinfo.bufnr, "&modifiable") == 1,
                 modified = vim.fn.getbufvar(bufinfo.bufnr, "&modified") == 1,
                 readonly = vim.fn.getbufvar(bufinfo.bufnr, "&readonly") == 1,
-                filetype = vim.fn.getbufvar(bufinfo.bufnr, "&filetype")
+                extension = vim.fn.expand("#" .. bufinfo.bufnr .. ":e")
             }
             if not last_timestamp or bufinfo.lastused > last_timestamp then
                 last_timestamp, last_buffer = bufinfo.lastused, buffer
@@ -90,10 +90,13 @@ M.get_buffers = function()
     return buffers
 end
 
-local get_icon = function(buffer)
-    if status == false then error("nvim-web-devicons is not installed") end
-    return devicons.get_icon(vim.fn.bufname(buffer.bufnr), buffer.filetype)
+local get_icon = function(buffer, web_status, web)
+    if not web_status then web_status = status end
+    if not web then web = devicons end
+    if web_status == false then error("nvim-web-devicons is not installed") end
+    return web.get_icon(vim.fn.bufname(buffer.bufnr), buffer.extension)
 end
+M.get_icon = get_icon
 
 M.generate_tab = function(buffer)
     local tab = {}

@@ -1,12 +1,13 @@
 local b = require("buftabline.buffers")
 local u = require("buftabline.utils")
 local o = require("buftabline.options")
+local spy = require("luassert.spy")
 
 local reset = function() vim.cmd("bufdo! bwipeout!") end
 
 describe("get_name", function()
+    after_each(function() reset() end)
     it("should return modifier + No Name when buffer name isn't set", function()
-        reset()
         vim.cmd("enew")
         local buffers = b.get_buffers()
 
@@ -16,7 +17,6 @@ describe("get_name", function()
     end)
 
     it("should return modifier + buffer name", function()
-        reset()
         vim.cmd("e testfile")
         local buffers = b.get_buffers()
 
@@ -26,7 +26,6 @@ describe("get_name", function()
     end)
 
     it("should return modifier + buffer name + flags", function()
-        reset()
         vim.cmd("e testfile")
         vim.cmd("normal itestcontent")
         local buffers = b.get_buffers()
@@ -37,7 +36,6 @@ describe("get_name", function()
     end)
 
     it("should format index according to index_format", function()
-        reset()
         o.set({index_format = "%d. "})
         vim.cmd("e testfile")
         local buffers = b.get_buffers()
@@ -49,8 +47,8 @@ describe("get_name", function()
 end)
 
 describe("get_buf_numbers", function()
+    after_each(function() reset() end)
     it("should get table of ordinal buffer numbers", function()
-        reset()
         for i = 1, 5 do vim.cmd("e" .. i) end
 
         local buf_numbers = b.get_buf_numbers()
@@ -60,8 +58,8 @@ describe("get_buf_numbers", function()
 end)
 
 describe("get_current_buf_number", function()
+    after_each(function() reset() end)
     it("should return current buffer's ordinal number", function()
-        reset()
         for i = 1, 5 do vim.cmd("e" .. i) end
         local buf_numbers = b.get_buf_numbers()
 
@@ -73,8 +71,9 @@ describe("get_current_buf_number", function()
 end)
 
 describe("get_buffers", function()
+    after_each(function() reset() end)
+
     it("should get table of open buffers and set current buffer", function()
-        reset()
         for i = 1, 5 do vim.cmd("e" .. i) end
 
         local buffers = b.get_buffers()
@@ -100,5 +99,22 @@ describe("get_bufname_base", function()
         local base = b.get_bufname_base()
 
         assert.equals(base, "  %s  ")
+    end)
+end)
+
+describe("get_icon", function()
+    after_each(function() reset() end)
+
+    it("should throw error when devicons fails to load",
+       function() assert.has_error(function() b.get_icon(false) end) end)
+
+    it("should call devicons.get_icon with file name and extension", function()
+        local get_icon = spy.new(function() end)
+        vim.cmd("e test-file.tsx")
+        local buffers = b.get_buffers()
+
+        b.get_icon(buffers[1], true, {get_icon = get_icon})
+
+        assert.spy(get_icon).was.called_with("test-file.tsx", "tsx")
     end)
 end)
