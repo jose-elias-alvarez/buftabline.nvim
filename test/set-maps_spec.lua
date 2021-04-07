@@ -1,7 +1,7 @@
 local o = require("buftabline.options")
 local set_maps = require("buftabline.set-maps")
 
-local reset = function()
+local breakdown = function()
     for i = 0, 9 do
         if vim.fn.maparg("<Leader>" .. i) ~= "" then
             vim.api.nvim_del_keymap("n", "<Leader>" .. i)
@@ -10,8 +10,9 @@ local reset = function()
 end
 
 describe("set_maps", function()
+    after_each(function() breakdown() end)
+
     it("should set go to buffer maps when go_to_maps == true", function()
-        reset()
         o.set({go_to_maps = true})
 
         set_maps()
@@ -24,7 +25,6 @@ describe("set_maps", function()
     end)
 
     it("should not set go to buffer maps when go_to_maps == false", function()
-        reset()
         o.set({go_to_maps = false})
 
         set_maps()
@@ -33,7 +33,6 @@ describe("set_maps", function()
     end)
 
     it("should set kill buffer maps when kill_maps == true", function()
-        reset()
         o.set({kill_maps = true})
 
         set_maps()
@@ -48,7 +47,6 @@ describe("set_maps", function()
     it(
         "should set custom command maps when custom_command and custom_map_prefix have been set",
         function()
-            reset()
             o.set({custom_command = "vsplit", custom_map_prefix = "v"})
 
             set_maps()

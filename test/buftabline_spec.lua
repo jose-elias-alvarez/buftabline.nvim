@@ -2,11 +2,12 @@ local o = require("buftabline.options")
 local b = require("buftabline.buffers")
 local buftabline = require("buftabline")
 
-local reset = function() vim.cmd("bufdo bwipeout!") end
+local breakdown = function() vim.cmd("bufdo bwipeout!") end
 
 describe("buftarget", function()
+    after_each(function() breakdown() end)
+
     it("should call specified command on specified buffer", function()
-        reset()
         for i = 1, 5 do vim.cmd("e" .. i) end
 
         buftabline.buftarget(1, "buffer")
@@ -16,7 +17,6 @@ describe("buftarget", function()
     end)
 
     it("should target 10th buffer when number == 0", function()
-        reset()
         for i = 1, 10 do vim.cmd("e" .. i) end
 
         buftabline.buftarget(1, "buffer")
@@ -46,9 +46,10 @@ describe("toggle_tabline", function()
 end)
 
 describe("custom_command", function()
+    after_each(function() breakdown() end)
+
     it("should call custom command when set", function()
         o.set({custom_command = "buffer"})
-        reset()
         for i = 1, 5 do vim.cmd("e" .. i) end
 
         buftabline.custom_command(1)
@@ -65,8 +66,9 @@ describe("custom_command", function()
 end)
 
 describe("build_bufferline", function()
+    after_each(function() breakdown() end)
+
     it("should build default bufferline from list of buffers", function()
-        reset()
         for i = 1, 5 do vim.cmd("e" .. i) end
 
         local bufferline = buftabline.build_bufferline()
@@ -85,8 +87,9 @@ describe("build_bufferline", function()
 end)
 
 describe("next_buffer", function()
+    after_each(function() breakdown() end)
+
     it("should target next buffer", function()
-        reset()
         for i = 1, 5 do vim.cmd("e" .. i) end
         local buf_numbers = b.get_buf_numbers()
         vim.cmd("buffer " .. buf_numbers[3])
@@ -99,7 +102,6 @@ describe("next_buffer", function()
 
     it("should wrap and target 1st buffer when current buffer is last buffer",
        function()
-        reset()
         for i = 1, 5 do vim.cmd("e" .. i) end
         local buf_numbers = b.get_buf_numbers()
         vim.cmd("buffer " .. buf_numbers[5])
@@ -112,8 +114,9 @@ describe("next_buffer", function()
 end)
 
 describe("prev_buffer", function()
+    after_each(function() breakdown() end)
+
     it("should target previous buffer", function()
-        reset()
         for i = 1, 5 do vim.cmd("e" .. i) end
         local buf_numbers = b.get_buf_numbers()
         vim.cmd("buffer " .. buf_numbers[3])
@@ -126,7 +129,6 @@ describe("prev_buffer", function()
 
     it("should wrap and target last buffer when current buffer is first buffer",
        function()
-        reset()
         for i = 1, 5 do vim.cmd("e" .. i) end
         local buf_numbers = b.get_buf_numbers()
         vim.cmd("buffer " .. buf_numbers[1])
