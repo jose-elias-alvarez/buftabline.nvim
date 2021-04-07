@@ -3,6 +3,7 @@ local o = require("buftabline.options")
 local set_bufferline = require("buftabline.set-bufferline")
 local set_maps = require("buftabline.set-maps")
 local add_commands = require("buftabline.add-commands")
+local auto_hide = require("buftabline.auto-hide")
 
 local M = {}
 M.build_bufferline = function()
@@ -50,6 +51,7 @@ M.setup = function(user_options)
     set_bufferline()
     set_maps()
     add_commands()
+    auto_hide.setup()
 end
 
 return M

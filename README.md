@@ -94,6 +94,7 @@ local options = {
     padding = 1,
     icons = false,
     start_hidden = false,
+    auto_hide = false,
     disable_commands = false,
     go_to_maps = true,
     kill_maps = false,
@@ -137,6 +138,11 @@ this option to `true`, in case you don't want them in your tabline.
 
 Hides the tabline when Neovim starts by setting `showtabline` to `0`. Disabled
 by default, but potentially useful in combination with `ToggleBuftabline`.
+
+### auto_hide
+
+Shows the tabline when you have more than one buffer open and hides it when you
+don't. Not compatible with `start_hidden`.
 
 ### disable_commands
 
