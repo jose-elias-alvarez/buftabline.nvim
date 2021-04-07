@@ -76,14 +76,6 @@ describe("build_bufferline", function()
         assert.equals(bufferline,
                       "%#TabLineFill# 1: 1 %*%#TabLineFill# 2: 2 %*%#TabLineFill# 3: 3 %*%#TabLineFill# 4: 4 %*%#TabLineSel# 5: 5 %*")
     end)
-
-    it(
-        "should throw an error when icons == true but devicons are not available",
-        function()
-            o.set({icons = true})
-
-            assert.has_error(function() buftabline.build_bufferline() end)
-        end)
 end)
 
 describe("next_buffer", function()
