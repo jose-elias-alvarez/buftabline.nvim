@@ -86,7 +86,9 @@ M.get_buffers = function()
             table.insert(buffers, buffer)
         end
     end
-    if exclude_buffer(current_bufnr) then last_buffer.current = true end
+    if last_buffer and exclude_buffer(current_bufnr) then
+        last_buffer.current = true
+    end
     return buffers
 end
 
@@ -113,4 +115,3 @@ M.generate_tab = function(buffer)
 end
 
 return M
-
