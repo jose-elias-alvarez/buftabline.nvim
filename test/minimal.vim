@@ -1,6 +1,6 @@
 set noswapfile
-set rtp+=.
-set rtp+=../plenary.nvim/
 set hidden
 
+set rtp=$VIMRUNTIME
+set rtp+=../plenary.nvim
 runtime! plugin/plenary.vim

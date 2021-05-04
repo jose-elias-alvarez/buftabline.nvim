@@ -195,7 +195,7 @@ but I don't think it'll change too much one way or another.
 
 I've covered most of the code with tests written with
 [plenary.nvim](https://github.com/nvim-lua/plenary.nvim)'s test harness. Running
-`./test.sh` from the plugin's root directory will run the test suite and exit
+`make test` from the plugin's root directory will run the test suite and exit
 with a relevant exit code.
 
 ## Inspiration
