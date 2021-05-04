@@ -1,11 +1,8 @@
 local o = require("buftabline.options")
 local set_hlgroup = require("buftabline.set-hlgroup")
-local status, devicons = pcall(require, "nvim-web-devicons")
 
 local exclude_buffer = function(bufnr)
-    return
-        vim.fn.buflisted(bufnr) == 0 or vim.fn.getbufvar(bufnr, "&filetype") ==
-            "qf"
+    return vim.fn.getbufvar(bufnr, "&filetype") == "qf"
 end
 
 local get_flags = function(buffer)
@@ -92,11 +89,9 @@ M.get_buffers = function()
     return buffers
 end
 
-local get_icon = function(buffer, web_status, web)
-    if not web_status then web_status = status end
-    if not web then web = devicons end
-    if web_status == false then error("nvim-web-devicons is not installed") end
-    return web.get_icon(vim.fn.bufname(buffer.bufnr), buffer.extension)
+local get_icon = function(buffer)
+    return require("nvim-web-devicons").get_icon(buffer.fname, buffer.extension,
+                                                 {default = true})
 end
 M.get_icon = get_icon
 
@@ -106,10 +101,7 @@ M.generate_tab = function(buffer)
     table.insert(tab, set_hlgroup(bufname, buffer.current))
 
     if o.get().icons then
-        local icon = get_icon(buffer)
-        if (icon) then
-            table.insert(tab, set_hlgroup(icon .. " ", buffer.current))
-        end
+        table.insert(tab, set_hlgroup(get_icon(buffer) .. " ", buffer.current))
     end
     return table.concat(tab)
 end
