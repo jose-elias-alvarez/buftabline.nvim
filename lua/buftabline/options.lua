@@ -8,6 +8,7 @@ local options = {
     disable_commands = false,
     go_to_maps = true,
     kill_maps = false,
+    next_indicator = ">",
     custom_command = nil,
     custom_map_prefix = nil,
     hlgroup_current = "TabLineSel",
@@ -22,4 +23,3 @@ end
 M.get = function() return options end
 
 return M
-

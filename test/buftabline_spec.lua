@@ -65,19 +65,6 @@ describe("custom_command", function()
     end)
 end)
 
-describe("build_bufferline", function()
-    after_each(function() breakdown() end)
-
-    it("should build default bufferline from list of buffers", function()
-        for i = 1, 5 do vim.cmd("e" .. i) end
-
-        local bufferline = buftabline.build_bufferline()
-
-        assert.equals(bufferline,
-                      "%#TabLineFill# 1: 1 %*%#TabLineFill# 2: 2 %*%#TabLineFill# 3: 3 %*%#TabLineFill# 4: 4 %*%#TabLineSel# 5: 5 %*")
-    end)
-end)
-
 describe("next_buffer", function()
     after_each(function() breakdown() end)
 

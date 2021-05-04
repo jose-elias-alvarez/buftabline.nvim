@@ -98,6 +98,7 @@ local options = {
     disable_commands = false,
     go_to_maps = true,
     kill_maps = false,
+    next_indicator = ">",
     custom_command = nil,
     custom_map_prefix = nil,
     hlgroup_current = "TabLineSel",
@@ -155,6 +156,10 @@ Maps `<Leader>0-9` to the corresponding `go_to_buffer` command.
 ### kill_maps
 
 Maps `<Leader>c0-9` to the corresponding `kill_buffer` command.
+
+### next_indicator
+
+Defines the indicator shown when the rightmost tab is truncated or when there are more tabs to show. Set to `>` by default to match the left side of the tabline, which Vim will automatically truncate.
 
 ### custom_command
 

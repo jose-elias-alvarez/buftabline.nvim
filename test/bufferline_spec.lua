@@ -129,4 +129,29 @@ describe("bufferline", function()
                           [[%!luaeval('require("buftabline").build_bufferline()')]])
         end)
     end)
+
+    describe("build_bufferline", function()
+        it("should build default bufferline from list of buffers", function()
+            for i = 1, 5 do vim.cmd("e" .. i) end
+
+            local line = bufferline.build()
+
+            assert.equals(line,
+                          "%#TabLineFill# 1: 1 %*%#TabLineFill# 2: 2 %*%#TabLineFill# 3: 3 %*%#TabLineFill# 4: 4 %*%#TabLineSel# 5: 5 %*")
+        end)
+
+        it(
+            "should shrink bufferline and show next indicator when size exceeds columns",
+            function()
+                vim.o.columns = 20
+                for i = 1, 2 do vim.cmd("e abcde" .. i) end
+                -- switch back to previous to shrink last buffer
+                vim.cmd("b#")
+
+                local line = bufferline.build()
+
+                assert.equals(line,
+                              "%#TabLineSel# 1: abcde1 %*%#TabLineFill# 2: abcd%*%#TabLineFill#>%*")
+            end)
+    end)
 end)
