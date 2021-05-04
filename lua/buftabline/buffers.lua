@@ -18,8 +18,12 @@ local get_name = function(buffer)
     local name = "[No Name]"
     local index = buffer.index
     local modifier = o.get().modifier
-    if vim.fn.bufname(buffer.bufnr) ~= "" then
-        name = vim.fn.fnamemodify(vim.fn.bufname(buffer.bufnr), modifier)
+    if buffer.name ~= "" then
+        name = vim.fn.fnamemodify(buffer.name, modifier)
+        if buffer.ambiguous then
+            local split = vim.split(buffer.name, "/")
+            name = split[vim.tbl_count(split) - 1] .. "/" .. name
+        end
     end
 
     local index_format = o.get().index_format
@@ -36,7 +40,7 @@ M.get_name = get_name
 local get_bufname_base = function()
     local bufname_base = {"%s"}
     local padding = o.get().padding
-    if padding then
+    if padding and padding > 0 then
         for _ = 1, padding do
             table.insert(bufname_base, " ")
             table.insert(bufname_base, 1, " ")
@@ -64,25 +68,35 @@ end
 
 M.get_buffers = function()
     local buffers = {}
-    local current_bufnr = vim.fn.bufnr()
     local last_timestamp, last_buffer
+    local current_bufnr = vim.api.nvim_get_current_buf()
     for i, bufinfo in ipairs(vim.fn.getbufinfo({buflisted = 1})) do
-        if not exclude_buffer(bufinfo.bufnr) then
-            local buffer = {
-                index = i,
-                bufnr = bufinfo.bufnr,
-                current = bufinfo.bufnr == current_bufnr,
-                modifiable = vim.fn.getbufvar(bufinfo.bufnr, "&modifiable") == 1,
-                modified = vim.fn.getbufvar(bufinfo.bufnr, "&modified") == 1,
-                readonly = vim.fn.getbufvar(bufinfo.bufnr, "&readonly") == 1,
-                extension = vim.fn.expand("#" .. bufinfo.bufnr .. ":e")
-            }
-            if not last_timestamp or bufinfo.lastused > last_timestamp then
-                last_timestamp, last_buffer = bufinfo.lastused, buffer
-            end
-            table.insert(buffers, buffer)
+        if exclude_buffer(bufinfo.bufnr) then break end
+        local buffer = {
+            index = i,
+            bufnr = bufinfo.bufnr,
+            name = bufinfo.name,
+            current = bufinfo.bufnr == current_bufnr,
+            modifiable = vim.fn.getbufvar(bufinfo.bufnr, "&modifiable") == 1,
+            modified = vim.fn.getbufvar(bufinfo.bufnr, "&modified") == 1,
+            readonly = vim.fn.getbufvar(bufinfo.bufnr, "&readonly") == 1,
+            extension = vim.fn.fnamemodify(bufinfo.name, ":e"),
+            fname = vim.fn.fnamemodify(bufinfo.name, ":t")
+        }
+        if not last_timestamp or bufinfo.lastused > last_timestamp then
+            last_timestamp, last_buffer = bufinfo.lastused, buffer
         end
+
+        for _, existing_buffer in ipairs(buffers) do
+            if existing_buffer.fname == buffer.fname then
+                buffer.ambiguous = true
+                existing_buffer.ambiguous = true
+            end
+        end
+
+        table.insert(buffers, buffer)
     end
+
     if last_buffer and exclude_buffer(current_bufnr) then
         last_buffer.current = true
     end
