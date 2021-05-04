@@ -1,18 +1,12 @@
 local b = require("buftabline.buffers")
 local o = require("buftabline.options")
-local set_bufferline = require("buftabline.set-bufferline")
+local bufferline = require("buftabline.bufferline")
 local set_maps = require("buftabline.set-maps")
 local add_commands = require("buftabline.add-commands")
 local auto_hide = require("buftabline.auto-hide")
 
 local M = {}
-M.build_bufferline = function()
-    local bufferline = {}
-    for _, buffer in ipairs(b.get_buffers()) do
-        table.insert(bufferline, b.generate_tab(buffer))
-    end
-    return table.concat(bufferline)
-end
+M.build_bufferline = bufferline.build
 
 local buftarget = function(number, command)
     if number == 0 then number = 10 end
@@ -48,10 +42,10 @@ end
 
 M.setup = function(user_options)
     o.set(user_options)
-    set_bufferline()
     set_maps()
     add_commands()
     auto_hide.setup()
+    bufferline.set()
 end
 
 return M
