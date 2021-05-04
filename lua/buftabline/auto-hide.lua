@@ -1,10 +1,9 @@
 local o = require("buftabline.options")
 local b = require("buftabline.buffers")
-local u = require("buftabline.utils")
 
 local M = {}
 M.watch = function()
-    vim.o.showtabline = u.tablelength(b.get_buffers()) <= 1 and 0 or 2
+    vim.o.showtabline = vim.tbl_count(b.get_buffers()) <= 1 and 0 or 2
 end
 
 M.setup = function()

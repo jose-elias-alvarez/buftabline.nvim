@@ -1,7 +1,6 @@
 local o = require("buftabline.options")
-local u = require("buftabline.utils")
 
-local defaults = u.deepcopy(o.get())
+local defaults = vim.deepcopy(o.get())
 
 describe("set_options", function()
     it("should return default options when no user options given", function()

@@ -1,5 +1,4 @@
 local b = require("buftabline.buffers")
-local u = require("buftabline.utils")
 local o = require("buftabline.options")
 local spy = require("luassert.spy")
 
@@ -53,7 +52,7 @@ describe("get_buf_numbers", function()
 
         local buf_numbers = b.get_buf_numbers()
 
-        assert.equals(u.tablelength(buf_numbers), 5)
+        assert.equals(vim.tbl_count(buf_numbers), 5)
     end)
 end)
 
@@ -78,7 +77,7 @@ describe("get_buffers", function()
 
         local buffers = b.get_buffers()
 
-        assert.equals(u.tablelength(buffers), 5)
+        assert.equals(vim.tbl_count(buffers), 5)
         assert.equals(buffers[4].current, false)
         assert.equals(buffers[5].current, true)
     end)
