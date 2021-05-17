@@ -1,6 +1,7 @@
 local options = {
     modifier = ":t",
     index_format = "%d: ",
+    buffer_id_index = false,
     padding = 1,
     icons = false,
     icon_colors = false,

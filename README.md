@@ -91,6 +91,7 @@ the following options (defaults shown):
 local options = {
     modifier = ":t",
     index_format = "%d: ",
+    buffer_id_index = false,
     padding = 1,
     icons = false,
     icon_colors = false,
@@ -121,6 +122,10 @@ change spacing and punctuation.
 For example, setting `index_format = "(%d) "` will format your tabs like this:
 
 ![index_format](./screenshots/index_format.png)
+
+### buffer_id_index
+
+Uses the buffer numeric ID as the buffer index (instead of a sequential index).
 
 ### padding
 

@@ -28,6 +28,9 @@ local get_name = function(buffer)
             name = split[vim.tbl_count(split) - 1] .. "/" .. name
         end
     end
+    if o.get().buffer_id_index then
+        index = buffer.bufnr
+    end
 
     local index_format = o.get().index_format
     local flags = get_flags(buffer)
