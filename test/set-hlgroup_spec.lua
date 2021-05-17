@@ -34,9 +34,10 @@ describe("set_hlgroup", function()
 
     describe("icon colors", function()
         before_each(function()
-            o.set({icon_colors = true})
+            o.set({icon_colors = true, padding = 1})
             vim.cmd("hi DevIconLua guifg=black")
         end)
+
         after_each(function() vim.cmd("hi clear DevIconLua") end)
 
         it("should format icon with normal hlgroup", function()

@@ -1,4 +1,5 @@
 local b = require("buftabline.buffers")
+local u = require("buftabline.utils")
 local o = require("buftabline.options")
 local set_hlgroup = require("buftabline.set-hlgroup")
 
@@ -41,21 +42,8 @@ local get_name = function(buffer)
 end
 M.get_name = get_name
 
-local get_padded_base = function()
-    local base = {"%s"}
-    local padding = o.get().padding
-    if padding and padding > 0 then
-        for _ = 1, padding do
-            table.insert(base, " ")
-            table.insert(base, 1, " ")
-        end
-    end
-    return table.concat(base)
-end
-M.get_padded_base = get_padded_base
-
 local generate_label = function(buffer)
-    return string.format(get_padded_base(), get_name(buffer))
+    return string.format(u.pad("%s"), get_name(buffer))
 end
 
 local format_tab = function(tab) return set_hlgroup(tab) end

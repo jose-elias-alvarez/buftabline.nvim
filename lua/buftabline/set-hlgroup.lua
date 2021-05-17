@@ -29,9 +29,7 @@ local set_hlgroup = function(tab)
         local split = vim.split(vim.trim(label), " ")
         -- assume icon is last element
         local icon = split[vim.tbl_count(split)]
-
         if not icon then return add_hlgroup(hlgroup, label) end
-        icon = icon .. " "
 
         -- create new hlgroup that uses devicons color for fg and tabline color for bg
         local merged_icon_hl = current and icon_hl .. "Current" or icon_hl ..
@@ -42,7 +40,8 @@ local set_hlgroup = function(tab)
                            get_hl_attribute(hlgroup, "background"))
         end
 
-        label = u.string_replace(label, icon, add_hlgroup(merged_icon_hl, icon))
+        label = u.string_replace(label, icon,
+                                 add_hlgroup(merged_icon_hl, u.pad(icon, true)))
     end
 
     return add_hlgroup(hlgroup, label)

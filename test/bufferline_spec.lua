@@ -10,25 +10,6 @@ describe("bufferline", function()
         o.set(defaults)
     end)
 
-    describe("get_padded_base", function()
-        it("should remove padding around base when padding = 0", function()
-            o.set({padding = 0})
-
-            local base = bufferline.get_padded_base()
-
-            assert.equals(base, "%s")
-        end)
-
-        it("should add one space around base for each digit of padding",
-           function()
-            o.set({padding = 2})
-
-            local base = bufferline.get_padded_base()
-
-            assert.equals(base, "  %s  ")
-        end)
-    end)
-
     describe("get_name", function()
         it("should return modifier + No Name when buffer name isn't set",
            function()
