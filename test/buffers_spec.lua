@@ -1,3 +1,5 @@
+local stub = require("luassert.stub")
+
 local b = require("buftabline.buffers")
 local o = require("buftabline.options")
 
@@ -32,6 +34,8 @@ describe("buffers", function()
     end)
 
     describe("get_buffers", function()
+        after_each(function() o.set({icons = false}) end)
+
         it("should get table of open buffers and set current buffer", function()
             for i = 1, 5 do vim.cmd("e" .. i) end
 
@@ -52,6 +56,19 @@ describe("buffers", function()
             assert.equals(buffers[1].ambiguous, true)
             assert.equals(buffers[2].ambiguous, nil)
             assert.equals(buffers[3].ambiguous, true)
+        end)
+
+        it("should set buffer icon info if icons option is set", function()
+            o.set({icons = true})
+            local get_icon = stub.new().returns("icon", "icon_hl")
+            package.loaded["nvim-web-devicons"] = {get_icon = get_icon}
+
+            vim.cmd("e testdir/testfile")
+            local buffers = b.get_buffers()
+
+            assert.stub(get_icon).was_called()
+            assert.equals(buffers[1].icon, "icon")
+            assert.equals(buffers[1].icon_hl, "icon_hl")
         end)
     end)
 end)

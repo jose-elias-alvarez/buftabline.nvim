@@ -1,5 +1,12 @@
+local o = require("buftabline.options")
+
 local exclude_buffer = function(bufnr)
     return vim.fn.getbufvar(bufnr, "&filetype") == "qf"
+end
+
+local get_icon = function(buffer)
+    return require("nvim-web-devicons").get_icon(buffer.fname, buffer.extension,
+                                                 {default = true})
 end
 
 local M = {}
@@ -37,6 +44,10 @@ M.get_buffers = function()
             extension = vim.fn.fnamemodify(bufinfo.name, ":e"),
             fname = vim.fn.fnamemodify(bufinfo.name, ":t")
         }
+        if o.get().icons then
+            buffer.icon, buffer.icon_hl = get_icon(buffer)
+        end
+
         if not last_timestamp or bufinfo.lastused > last_timestamp then
             last_timestamp, last_buffer = bufinfo.lastused, buffer
         end

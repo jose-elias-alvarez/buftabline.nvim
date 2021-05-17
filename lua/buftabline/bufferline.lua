@@ -35,6 +35,8 @@ local get_name = function(buffer)
     else
         name = string.format(index_format .. "%s", index, name)
     end
+
+    if buffer.icon then name = name .. " " .. buffer.icon end
     return name
 end
 M.get_name = get_name
@@ -52,19 +54,11 @@ local get_padded_base = function()
 end
 M.get_padded_base = get_padded_base
 
-local get_icon = function(buffer)
-    return require("nvim-web-devicons").get_icon(buffer.fname, buffer.extension,
-                                                 {default = true})
-end
-M.get_icon = get_icon
-
 local generate_label = function(buffer)
-    local label = string.format(get_padded_base(), get_name(buffer))
-    if o.get().icons then label = label .. get_icon(buffer) .. " " end
-    return label
+    return string.format(get_padded_base(), get_name(buffer))
 end
 
-local format_tab = function(tab) return set_hlgroup(tab.label, tab.current) end
+local format_tab = function(tab) return set_hlgroup(tab) end
 
 local generate_tabs = function(buffers)
     local tabs = {}
@@ -76,7 +70,8 @@ local generate_tabs = function(buffers)
         table.insert(tabs, {
             label = label,
             width = tab_width,
-            current = buffer.current
+            current = buffer.current,
+            icon_hl = buffer.icon_hl
         })
 
         if buffer.current then current_pos = width end

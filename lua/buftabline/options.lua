@@ -3,6 +3,7 @@ local options = {
     index_format = "%d: ",
     padding = 1,
     icons = false,
+    icon_colors = false,
     start_hidden = false,
     auto_hide = false,
     disable_commands = false,

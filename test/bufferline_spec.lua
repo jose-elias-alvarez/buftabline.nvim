@@ -1,5 +1,3 @@
-local spy = require("luassert.spy")
-
 local b = require("buftabline.buffers")
 local o = require("buftabline.options")
 local bufferline = require("buftabline.bufferline")
@@ -10,27 +8,6 @@ describe("bufferline", function()
     after_each(function()
         vim.cmd("bufdo! bwipeout!")
         o.set(defaults)
-    end)
-
-    describe("get_icon", function()
-        it("should throw error when devicons fails to load", function()
-            package.loaded["nvim-web-devicons"] = nil
-
-            assert.has_error(function() bufferline.get_icon() end)
-        end)
-
-        it("should call devicons.get_icon with file name and extension",
-           function()
-            local get_icon = spy.new(function() end)
-            package.loaded["nvim-web-devicons"] = {get_icon = get_icon}
-
-            vim.cmd("e test-file.tsx")
-            local buffers = b.get_buffers()
-            bufferline.get_icon(buffers[1])
-
-            assert.spy(get_icon).was.called_with("test-file.tsx", "tsx",
-                                                 {default = true})
-        end)
     end)
 
     describe("get_padded_base", function()
@@ -100,6 +77,16 @@ describe("bufferline", function()
             local name = bufferline.get_name(buffers[1])
 
             assert.equals(name, "1: testdir/testfile")
+        end)
+
+        it("should add buffer icon to end", function()
+            vim.cmd("e testdir/testfile")
+            local buffers = b.get_buffers()
+            buffers[1].icon = ""
+
+            local name = bufferline.get_name(buffers[1])
+
+            assert.equals(name, "1: testfile ")
         end)
     end)
 

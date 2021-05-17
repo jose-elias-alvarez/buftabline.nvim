@@ -93,6 +93,7 @@ local options = {
     index_format = "%d: ",
     padding = 1,
     icons = false,
+    icon_colors = false,
     start_hidden = false,
     auto_hide = false,
     disable_commands = false,
@@ -134,6 +135,13 @@ you've installed nvim-web-devicons, you must explicitly enable icons by setting
 this option to `true`, in case you don't want them in your tabline.
 
 ![devicons](./screenshots/devicons.png)
+
+### icon_colors
+
+Shows nvim-web-devicon's built-in icon colors in your tabline. Defaults to `false`.
+
+Depending on your tabline, you may want to change the plugin's default highlight
+groups for better visibility.
 
 ### start_hidden
 
@@ -219,4 +227,5 @@ with a relevant exit code.
 - [nvim-bufferline](https://github.com/akinsho/nvim-bufferline.lua) and
   [barbar.nvim](https://github.com/romgrk/barbar.nvim), two tabline plugins that
   are far and away better than this one but are a little too much for my simple
-  needs.
+  needs. (Thanks to barbar.nvim for its implementation of colored icons, which
+  provided the basis for the implementation in this plugin.)
