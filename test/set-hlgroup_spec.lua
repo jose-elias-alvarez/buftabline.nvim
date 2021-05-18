@@ -60,5 +60,73 @@ describe("set_hlgroup", function()
             assert.truthy(string.find(result, "%#DevIconLuaCurrent#", nil,
                                       true))
         end)
+
+        it("should not format icon when icon_hl is not set", function()
+            local result = set_hlgroup({
+                label = " 1: options.lua  ",
+                current = true
+            })
+
+            assert.falsy(string.find(result, "%#DevIconLuaCurrent#", nil,
+                                     true))
+        end)
+
+        it("should format icon when tab is current and icon_colors == current",
+           function()
+            o.set({icon_colors = "current"})
+
+            local result = set_hlgroup({
+                label = " 1: options.lua  ",
+                icon_hl = "DevIconLua",
+                current = true
+            })
+
+            assert.truthy(string.find(result, "%#DevIconLuaCurrent#", nil,
+                                      true))
+        end)
+
+        it(
+            "should not format icon when tab is current and icon_colors ~= current",
+            function()
+                o.set({icon_colors = "normal"})
+
+                local result = set_hlgroup(
+                                   {
+                        label = " 1: options.lua  ",
+                        icon_hl = "DevIconLua",
+                        current = true
+                    })
+
+                assert.falsy(string.find(result, "%#DevIconLuaCurrent#", nil,
+                                         true))
+            end)
+
+        it("should format icon when tab is normal and icon_colors == normal",
+           function()
+            o.set({icon_colors = "normal"})
+
+            local result = set_hlgroup({
+                label = " 1: options.lua  ",
+                icon_hl = "DevIconLua"
+            })
+
+            assert.truthy(string.find(result, "%#DevIconLuaNormal#", nil,
+                                      true))
+        end)
+
+        it(
+            "should not format icon when tab is normal and icon_colors ~= normal",
+            function()
+                o.set({icon_colors = "current"})
+
+                local result = set_hlgroup(
+                                   {
+                        label = " 1: options.lua  ",
+                        icon_hl = "DevIconLua"
+                    })
+
+                assert.falsy(string.find(result, "%#DevIconLuaNormal#", nil,
+                                         true))
+            end)
     end)
 end)

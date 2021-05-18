@@ -140,6 +140,9 @@ this option to `true`, in case you don't want them in your tabline.
 
 Shows nvim-web-devicon's built-in icon colors in your tabline. Defaults to `false`.
 
+Can be set to `true` (always show icon colors), `current` (show icon color for
+current tab only), and `normal` (show icon colors for background tabs only).
+
 Depending on your tabline, you may want to change the plugin's default highlight
 groups for better visibility.
 
