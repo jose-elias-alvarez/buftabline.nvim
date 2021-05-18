@@ -13,11 +13,32 @@ describe("buffers", function()
 
     describe("get_buf_numbers", function()
         it("should get table of ordinal buffer numbers", function()
-            for i = 1, 5 do vim.cmd("e" .. i) end
+            for i = 1, 5 do
+                vim.cmd("e" .. i)
+                if (i % 2 == 0) then vim.cmd("bw") end
+            end
 
             local buf_numbers = b.get_buf_numbers()
 
-            assert.equals(vim.tbl_count(buf_numbers), 5)
+            assert.equals(vim.tbl_count(buf_numbers), 3)
+            for i = 1, 3 do
+                assert.is.truthy(buf_numbers[i])
+            end
+        end)
+
+        it("should get a table of non-ordinal buffer numbers when buffer_id_index is true", function()
+            o.set({buffer_id_index = true})
+            for i = 1, 5 do
+                vim.cmd("e" .. i)
+                if (i % 2 == 0) then vim.cmd("bw") end
+            end
+
+            local buf_numbers = b.get_buf_numbers()
+
+            assert.equals(vim.tbl_count(buf_numbers), 3)
+            for i = 2, 3 do
+                assert.not.equals(i, buf_numbers[i])
+            end
         end)
     end)
 

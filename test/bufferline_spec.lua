@@ -50,18 +50,6 @@ describe("bufferline", function()
             assert.equals(name, "1. testfile")
         end)
 
-        it("should use buffer ID as index when buffer id index is true", function()
-            o.set({buffer_id_index = true})
-            vim.cmd("e testfile")
-            vim.cmd("bw")
-            vim.cmd("e testfile")
-            local buffers = b.get_buffers()
-
-            local name = bufferline.get_name(buffers[1])
-
-            assert.equals(name, "2. testfile")
-        end)
-
         it("should add directory name when ambiguous", function()
             vim.cmd("e testdir/testfile")
             local buffers = b.get_buffers()
