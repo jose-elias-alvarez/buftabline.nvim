@@ -200,8 +200,6 @@ Sets the highlight group for normal (non-current) buffers.
 
 ## Non-goals
 
-- Non-ordinal numbers. LSP servers and plugins constantly create and
-  delete temporary buffers, so I don't personally see the point.
 - Vim support. Use [vim-buftabline](https://github.com/ap/vim-buftabline)!
 - Mouse support.
 - Extensive visual customization.
