@@ -9,11 +9,15 @@ local M = {}
 M.build_bufferline = bufferline.build
 
 local buftarget = function(number, command)
-    if number == 0 then number = 10 end
+    if o.get().buffer_id_index then
+        vim.api.nvim_command(command .. " " .. number)
+    else
+        if number == 0 then number = 10 end
 
-    local buf_numbers = b.get_buf_numbers()
-    if number <= #buf_numbers then
-        vim.cmd(command .. " " .. buf_numbers[number])
+        local buf_numbers = b.get_buf_numbers()
+        if number <= #buf_numbers then
+            vim.cmd(command .. " " .. buf_numbers[number])
+        end
     end
 end
 M.buftarget = buftarget
@@ -27,13 +31,21 @@ M.custom_command = function(num)
 end
 
 M.next_buffer = function()
-    local next = b.get_current_buf_number() + 1
-    buftarget(b.get_buf_numbers()[next] and next or 1, "buffer")
+    if o.get().buffer_id_index then
+        vim.api.nvim_command('bnext')
+    else
+        local next = b.get_current_buf_number() + 1
+        buftarget(b.get_buf_numbers()[next] and next or 1, "buffer")
+    end
 end
 M.prev_buffer = function()
-    local prev = b.get_current_buf_number() - 1
-    buftarget(b.get_buf_numbers()[prev] and prev or (#b.get_buf_numbers()),
-              "buffer")
+    if o.get().buffer_id_index then
+        vim.api.nvim_command('bprev')
+    else
+        local prev = b.get_current_buf_number() - 1
+        buftarget(b.get_buf_numbers()[prev] and prev or (#b.get_buf_numbers()),
+            "buffer")
+    end
 end
 
 M.toggle_tabline = function()
