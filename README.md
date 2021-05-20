@@ -91,6 +91,7 @@ the following options (defaults shown):
 local options = {
     modifier = ":t",
     index_format = "%d: ",
+    buffer_id_index = false,
     padding = 1,
     icons = false,
     icon_colors = false,
@@ -121,6 +122,10 @@ change spacing and punctuation.
 For example, setting `index_format = "(%d) "` will format your tabs like this:
 
 ![index_format](./screenshots/index_format.png)
+
+### buffer_id_index
+
+Uses the buffer numeric ID as the buffer index (instead of a sequential index).
 
 ### padding
 
@@ -198,8 +203,6 @@ Sets the highlight group for normal (non-current) buffers.
 
 ## Non-goals
 
-- Non-ordinal numbers. LSP servers and plugins constantly create and
-  delete temporary buffers, so I don't personally see the point.
 - Vim support. Use [vim-buftabline](https://github.com/ap/vim-buftabline)!
 - Mouse support.
 - Extensive visual customization.

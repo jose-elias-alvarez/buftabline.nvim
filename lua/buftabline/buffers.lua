@@ -47,6 +47,9 @@ M.get_buffers = function()
         if o.get().icons then
             buffer.icon, buffer.icon_hl = get_icon(buffer)
         end
+        if o.get().buffer_id_index then
+            buffer.index = buffer.bufnr
+        end
 
         if not last_timestamp or bufinfo.lastused > last_timestamp then
             last_timestamp, last_buffer = bufinfo.lastused, buffer
