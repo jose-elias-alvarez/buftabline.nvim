@@ -21,25 +21,25 @@ describe("buffers", function()
             local buf_numbers = b.get_buf_numbers()
 
             assert.equals(vim.tbl_count(buf_numbers), 3)
-            for i = 1, 3 do
-                assert.is.truthy(buf_numbers[i])
-            end
+            for i = 1, 3 do assert.is.truthy(buf_numbers[i]) end
         end)
 
-        it("should get a table of non-ordinal buffer numbers when buffer_id_index is true", function()
-            o.set({buffer_id_index = true})
-            for i = 1, 5 do
-                vim.cmd("e" .. i)
-                if (i % 2 == 0) then vim.cmd("bw") end
-            end
+        it(
+            "should get a table of non-ordinal buffer numbers when buffer_id_index is true",
+            function()
+                o.set({buffer_id_index = true})
+                for i = 1, 5 do
+                    vim.cmd("e" .. i)
+                    if (i % 2 == 0) then vim.cmd("bw") end
+                end
 
-            local buf_numbers = b.get_buf_numbers()
+                local buf_numbers = b.get_buf_numbers()
 
-            assert.equals(vim.tbl_count(buf_numbers), 3)
-            for i = 2, 3 do
-                assert.not.equals(i, buf_numbers[i])
-            end
-        end)
+                assert.equals(vim.tbl_count(buf_numbers), 3)
+                for i = 2, 3 do
+                    assert.not_equals(i, buf_numbers[i])
+                end
+            end)
     end)
 
     describe("get_current_buf_number", function()
