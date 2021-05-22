@@ -26,9 +26,9 @@ local set_hlgroup = function(tab)
     if not hl_exists(hlgroup) then return label end
 
     local icon_colors = o.get().icon_colors
-    if icon_hl and icon_colors == true or
-        (icon_colors == "current" and tab.current) or
-        (icon_colors == "normal" and not tab.current) then
+    if icon_hl and
+        (icon_colors == true or (icon_colors == "current" and tab.current) or
+            (icon_colors == "normal" and not tab.current)) then
         local split = vim.split(vim.trim(label), " ")
         -- assume icon is last element
         local icon = split[vim.tbl_count(split)]
