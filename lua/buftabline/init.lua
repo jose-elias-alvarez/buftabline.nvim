@@ -32,7 +32,7 @@ end
 
 M.next_buffer = function()
     if o.get().buffer_id_index then
-        vim.api.nvim_command('bnext')
+        vim.api.nvim_command("bnext")
     else
         local next = b.get_current_buf_number() + 1
         buftarget(b.get_buf_numbers()[next] and next or 1, "buffer")
@@ -40,11 +40,11 @@ M.next_buffer = function()
 end
 M.prev_buffer = function()
     if o.get().buffer_id_index then
-        vim.api.nvim_command('bprev')
+        vim.api.nvim_command("bprev")
     else
         local prev = b.get_current_buf_number() - 1
         buftarget(b.get_buf_numbers()[prev] and prev or (#b.get_buf_numbers()),
-            "buffer")
+                  "buffer")
     end
 end
 

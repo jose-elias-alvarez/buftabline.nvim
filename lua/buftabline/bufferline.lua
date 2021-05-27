@@ -53,8 +53,11 @@ local generate_tabs = function(buffers)
     local current_pos, width = 0, 0
     for _, buffer in ipairs(buffers) do
         local label = generate_label(buffer)
-        -- use strchars to account for icons
+
         local tab_width = strchars(label)
+        -- this is far from scientific but seems to work
+        if o.get().icons then tab_width = tab_width + 1 end
+
         table.insert(tabs, {
             label = label,
             width = tab_width,
@@ -69,7 +72,7 @@ local generate_tabs = function(buffers)
 end
 
 local tab_is_visible = function(tab, pos, current_pos, columns)
-    local side = pos - tab.width < current_pos and "left" or "right"
+    local side = pos - tab.width <= current_pos and "left" or "right"
     -- vim handles shrinking left-side tabs automatically
     if side == "left" then return true end
 

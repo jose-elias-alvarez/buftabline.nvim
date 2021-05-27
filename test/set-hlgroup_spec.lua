@@ -71,6 +71,16 @@ describe("set_hlgroup", function()
                                      true))
         end)
 
+        it("should not format icon when tab shrank", function()
+            local result = set_hlgroup({
+                label = " 1: options.lua  ",
+                shrank = true
+            })
+
+            assert.falsy(string.find(result, "%#DevIconLuaCurrent#", nil,
+                                     true))
+        end)
+
         it("should format icon when tab is current and icon_colors == current",
            function()
             o.set({icon_colors = "current"})

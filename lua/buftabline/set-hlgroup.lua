@@ -20,15 +20,17 @@ local create_hlgroup = function(name, fg, bg)
 end
 
 local set_hlgroup = function(tab)
-    local label, current, icon_hl = tab.label, tab.current, tab.icon_hl
+    local label, current, icon_hl, shrank = tab.label, tab.current, tab.icon_hl,
+                                            tab.shrank
+
     local hlgroup = current and o.get().hlgroup_current or
                         o.get().hlgroup_normal
     if not hl_exists(hlgroup) then return label end
 
     local icon_colors = o.get().icon_colors
-    if icon_hl and
-        (icon_colors == true or (icon_colors == "current" and tab.current) or
-            (icon_colors == "normal" and not tab.current)) then
+    if icon_hl and not shrank and
+        (icon_colors == true or (icon_colors == "current" and current) or
+            (icon_colors == "normal" and not current)) then
         local split = vim.split(vim.trim(label), " ")
         -- assume icon is last element
         local icon = split[vim.tbl_count(split)]
