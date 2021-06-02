@@ -75,12 +75,12 @@ allows access to enable creating more custom commands:
 :lua require("buftabline").buftarget(1, "rightbelow sb")
 ```
 
-Finally, the plugin adds the following Vim commands:
+Lastly, the plugin adds the following Vim commands:
 
 - `:ToggleBuftabline` (useful for smaller screens / focus sessions)
 
-- `:BufNext` and `:BufPrev` (similar to `:bnext` and `:bprev`, but they skip
-  over invisible buffers)
+- `:BufNext` and `:BufPrev` (like `:bnext` and `:bprev`, but they skip over
+  invisible buffers)
 
 ## Options
 
@@ -100,6 +100,7 @@ local options = {
     disable_commands = false,
     go_to_maps = true,
     kill_maps = false,
+    show_no_name_buffers = false,
     next_indicator = ">",
     custom_command = nil,
     custom_map_prefix = nil,
@@ -145,8 +146,8 @@ this option to `true`, in case you don't want them in your tabline.
 
 Shows nvim-web-devicon's built-in icon colors in your tabline. Defaults to `false`.
 
-Can be set to `true` (always show icon colors), `current` (show icon color for
-current tab only), and `normal` (show icon colors for background tabs only).
+Can be `true` (always show icon colors), `current` (show icon color for current
+tab), and `normal` (show icon colors for background tabs).
 
 Depending on your tabline, you may want to change the plugin's default highlight
 groups for better visibility.
@@ -173,9 +174,15 @@ Maps `<Leader>0-9` to the corresponding `go_to_buffer` command.
 
 Maps `<Leader>c0-9` to the corresponding `kill_buffer` command.
 
+### show_no_name_buffers
+
+Does precisely what you'd imagine.
+
 ### next_indicator
 
-Defines the indicator shown when the rightmost tab is truncated or when there are more tabs to show. Set to `>` by default to match the left side of the tabline, which Vim will automatically truncate.
+Defines the indicator shown when the bufferline truncates the rightmost tab or
+when there are more tabs to show. Set to `>` by default to match the left side
+of the tabline, which Neovim will automatically truncate.
 
 ### custom_command
 

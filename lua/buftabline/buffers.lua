@@ -13,7 +13,9 @@ local M = {}
 local get_buf_numbers = function()
     local numbers = {}
     for i, bufinfo in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
-        numbers[i] = bufinfo.bufnr
+        if bufinfo.name ~= "" or o.get().show_no_name_buffers then
+            numbers[i] = bufinfo.bufnr
+        end
     end
     return numbers
 end
@@ -65,7 +67,9 @@ M.get_buffers = function()
             end
         end
 
-        table.insert(buffers, buffer)
+        if buffer.name ~= "" or o.get().show_no_name_buffers then
+            table.insert(buffers, buffer)
+        end
     end
 
     if last_buffer and exclude_buffer(current_bufnr) then

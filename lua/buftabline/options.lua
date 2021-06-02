@@ -10,6 +10,7 @@ local options = {
     disable_commands = false,
     go_to_maps = true,
     kill_maps = false,
+    show_no_name_buffers = false,
     next_indicator = ">",
     custom_command = nil,
     custom_map_prefix = nil,

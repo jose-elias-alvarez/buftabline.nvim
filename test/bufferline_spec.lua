@@ -12,6 +12,7 @@ describe("bufferline", function()
 
     describe("get_name", function()
         it("should return modifier + No Name when buffer name isn't set", function()
+            o.set({ show_no_name_buffers = true })
             vim.cmd("enew")
             local buffers = b.get_buffers()
 
