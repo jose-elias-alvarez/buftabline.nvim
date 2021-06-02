@@ -7,6 +7,11 @@ local open_buffers = function(count)
     end
 end
 
+-- wait for schedule
+local wait = function()
+    vim.wait(0)
+end
+
 describe("watch", function()
     after_each(function()
         vim.cmd("bufdo! bwipeout!")
@@ -16,6 +21,7 @@ describe("watch", function()
         open_buffers(1)
 
         auto_hide.watch()
+        wait()
 
         assert.equals(vim.o.showtabline, 0)
     end)
@@ -24,6 +30,7 @@ describe("watch", function()
         open_buffers(2)
 
         auto_hide.watch()
+        wait()
 
         assert.equals(vim.o.showtabline, 2)
     end)
@@ -44,7 +51,7 @@ describe("setup", function()
 
         auto_hide.setup()
 
-        assert.equals(vim.fn.exists("#WatchBuffers#BufEnter,BufCreate"), 0)
+        assert.equals(vim.fn.exists("#WatchBuffers#BufAdd,BufDelete"), 0)
     end)
 
     it("should not set autocmd when auto_hide and start_hidden are both true", function()
@@ -52,7 +59,7 @@ describe("setup", function()
 
         auto_hide.setup()
 
-        assert.equals(vim.fn.exists("#WatchBuffers#BufEnter,BufCreate"), 0)
+        assert.equals(vim.fn.exists("#WatchBuffers#BufAdd,BufDelete"), 0)
     end)
 
     it("should set autocmd when auto_hide is true and start_hidden is false", function()
@@ -60,6 +67,6 @@ describe("setup", function()
 
         auto_hide.setup()
 
-        assert.equals(vim.fn.exists("#WatchBuffers#BufEnter,BufCreate"), 1)
+        assert.equals(vim.fn.exists("#WatchBuffers#BufAdd,BufDelete"), 1)
     end)
 end)

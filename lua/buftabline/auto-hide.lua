@@ -3,7 +3,10 @@ local b = require("buftabline.buffers")
 
 local M = {}
 M.watch = function()
-    vim.o.showtabline = vim.tbl_count(b.get_buffers()) <= 1 and 0 or 2
+    -- schedule to make sure we get accurate buffer count
+    vim.schedule(function()
+        vim.o.showtabline = vim.tbl_count(b.get_buf_numbers()) <= 1 and 0 or 2
+    end)
 end
 
 M.setup = function()
@@ -11,12 +14,11 @@ M.setup = function()
         return
     end
 
-    -- BufCreate is for compatibility w/ plugins that open multiple files at once (e.g. nnn.vim)
     vim.api.nvim_exec(
         [[
     augroup WatchBuffers
         autocmd!
-        autocmd BufEnter,BufCreate * lua require'buftabline.auto-hide'.watch()
+        autocmd BufAdd,BufDelete * lua require'buftabline.auto-hide'.watch()
     augroup END
     ]],
         false
