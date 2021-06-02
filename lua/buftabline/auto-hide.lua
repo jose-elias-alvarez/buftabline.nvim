@@ -7,15 +7,20 @@ M.watch = function()
 end
 
 M.setup = function()
-    if not o.get().auto_hide or o.get().start_hidden then return end
+    if not o.get().auto_hide or o.get().start_hidden then
+        return
+    end
 
     -- BufCreate is for compatibility w/ plugins that open multiple files at once (e.g. nnn.vim)
-    vim.api.nvim_exec([[
+    vim.api.nvim_exec(
+        [[
     augroup WatchBuffers
         autocmd!
         autocmd BufEnter,BufCreate * lua require'buftabline.auto-hide'.watch()
     augroup END
-    ]], false)
+    ]],
+        false
+    )
 end
 
 return M

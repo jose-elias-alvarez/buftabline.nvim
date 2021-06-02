@@ -5,15 +5,14 @@ local exclude_buffer = function(bufnr)
 end
 
 local get_icon = function(buffer)
-    return require("nvim-web-devicons").get_icon(buffer.fname, buffer.extension,
-                                                 {default = true})
+    return require("nvim-web-devicons").get_icon(buffer.fname, buffer.extension, { default = true })
 end
 
 local M = {}
 
 local get_buf_numbers = function()
     local numbers = {}
-    for i, bufinfo in ipairs(vim.fn.getbufinfo({buflisted = 1})) do
+    for i, bufinfo in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
         numbers[i] = bufinfo.bufnr
     end
     return numbers
@@ -23,7 +22,9 @@ M.get_buf_numbers = get_buf_numbers
 M.get_current_buf_number = function()
     local current_bufnr = vim.fn.bufnr()
     for i, v in ipairs(get_buf_numbers()) do
-        if v == current_bufnr then return i end
+        if v == current_bufnr then
+            return i
+        end
     end
 end
 
@@ -31,8 +32,10 @@ M.get_buffers = function()
     local buffers = {}
     local last_timestamp, last_buffer
     local current_bufnr = vim.api.nvim_get_current_buf()
-    for i, bufinfo in ipairs(vim.fn.getbufinfo({buflisted = 1})) do
-        if exclude_buffer(bufinfo.bufnr) then break end
+    for i, bufinfo in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
+        if exclude_buffer(bufinfo.bufnr) then
+            break
+        end
         local buffer = {
             index = i,
             bufnr = bufinfo.bufnr,
@@ -42,7 +45,7 @@ M.get_buffers = function()
             modified = vim.fn.getbufvar(bufinfo.bufnr, "&modified") == 1,
             readonly = vim.fn.getbufvar(bufinfo.bufnr, "&readonly") == 1,
             extension = vim.fn.fnamemodify(bufinfo.name, ":e"),
-            fname = vim.fn.fnamemodify(bufinfo.name, ":t")
+            fname = vim.fn.fnamemodify(bufinfo.name, ":t"),
         }
         if o.get().icons then
             buffer.icon, buffer.icon_hl = get_icon(buffer)

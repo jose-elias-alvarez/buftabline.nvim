@@ -12,7 +12,9 @@ local buftarget = function(number, command)
     if o.get().buffer_id_index then
         vim.api.nvim_command(command .. " " .. number)
     else
-        if number == 0 then number = 10 end
+        if number == 0 then
+            number = 10
+        end
 
         local buf_numbers = b.get_buf_numbers()
         if number <= #buf_numbers then
@@ -22,11 +24,17 @@ local buftarget = function(number, command)
 end
 M.buftarget = buftarget
 
-M.go_to_buffer = function(num) buftarget(num, "buffer") end
-M.kill_buffer = function(num) buftarget(num, "bd") end
+M.go_to_buffer = function(num)
+    buftarget(num, "buffer")
+end
+M.kill_buffer = function(num)
+    buftarget(num, "bd")
+end
 M.custom_command = function(num)
     local cmd = o.get().custom_command
-    if not cmd then error("custom command not set") end
+    if not cmd then
+        error("custom command not set")
+    end
     buftarget(num, cmd)
 end
 
@@ -43,8 +51,7 @@ M.prev_buffer = function()
         vim.api.nvim_command("bprev")
     else
         local prev = b.get_current_buf_number() - 1
-        buftarget(b.get_buf_numbers()[prev] and prev or (#b.get_buf_numbers()),
-                  "buffer")
+        buftarget(b.get_buf_numbers()[prev] and prev or (#b.get_buf_numbers()), "buffer")
     end
 end
 

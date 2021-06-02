@@ -12,7 +12,7 @@ describe("set_options", function()
     end)
 
     it("should update defaults when user options given", function()
-        o.set({start_hidden = true})
+        o.set({ start_hidden = true })
 
         local options = o.get()
 

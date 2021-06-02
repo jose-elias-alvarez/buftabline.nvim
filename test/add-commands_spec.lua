@@ -1,13 +1,16 @@
 local o = require("buftabline.options")
 local add_commands = require("buftabline.add-commands")
 
-local breakdown = function() vim.cmd("comclear") end
+local breakdown = function()
+    vim.cmd("comclear")
+end
 
 describe("add_commands", function()
-    after_each(function() breakdown() end)
+    after_each(function()
+        breakdown()
+    end)
 
     it("should create commands", function()
-
         add_commands()
 
         assert.equals(vim.fn.exists(":ToggleBuftabline"), 2)
@@ -16,7 +19,7 @@ describe("add_commands", function()
     end)
 
     it("should not create commands when disable_commands is true", function()
-        o.set({disable_commands = true})
+        o.set({ disable_commands = true })
 
         add_commands()
 

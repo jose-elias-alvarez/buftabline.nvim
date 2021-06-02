@@ -11,8 +11,7 @@ describe("bufferline", function()
     end)
 
     describe("get_name", function()
-        it("should return modifier + No Name when buffer name isn't set",
-           function()
+        it("should return modifier + No Name when buffer name isn't set", function()
             vim.cmd("enew")
             local buffers = b.get_buffers()
 
@@ -41,7 +40,7 @@ describe("bufferline", function()
         end)
 
         it("should format index according to index_format", function()
-            o.set({index_format = "%d. "})
+            o.set({ index_format = "%d. " })
             vim.cmd("e testfile")
             local buffers = b.get_buffers()
 
@@ -73,7 +72,7 @@ describe("bufferline", function()
 
     describe("set_bufferline", function()
         it("should set showtabline to 0 when start_hidden == true", function()
-            o.set({start_hidden = true})
+            o.set({ start_hidden = true })
 
             bufferline.set()
 
@@ -81,7 +80,7 @@ describe("bufferline", function()
         end)
 
         it("should set showtabline to 2 when start_hidden == false", function()
-            o.set({start_hidden = false})
+            o.set({ start_hidden = false })
 
             bufferline.set()
 
@@ -93,33 +92,35 @@ describe("bufferline", function()
 
             bufferline.set()
 
-            assert.equals(vim.o.tabline,
-                          [[%!luaeval('require("buftabline").build_bufferline()')]])
+            assert.equals(vim.o.tabline, [[%!luaeval('require("buftabline").build_bufferline()')]])
         end)
     end)
 
     describe("build_bufferline", function()
         it("should build default bufferline from list of buffers", function()
-            for i = 1, 5 do vim.cmd("e" .. i) end
+            for i = 1, 5 do
+                vim.cmd("e" .. i)
+            end
 
             local line = bufferline.build()
 
-            assert.equals(line,
-                          "%#TabLineFill# 1: 1 %*%#TabLineFill# 2: 2 %*%#TabLineFill# 3: 3 %*%#TabLineFill# 4: 4 %*%#TabLineSel# 5: 5 %*")
+            assert.equals(
+                line,
+                "%#TabLineFill# 1: 1 %*%#TabLineFill# 2: 2 %*%#TabLineFill# 3: 3 %*%#TabLineFill# 4: 4 %*%#TabLineSel# 5: 5 %*"
+            )
         end)
 
-        it(
-            "should shrink bufferline and show next indicator when size exceeds columns",
-            function()
-                vim.o.columns = 20
-                for i = 1, 2 do vim.cmd("e abcde" .. i) end
-                -- switch back to previous to shrink last buffer
-                vim.cmd("b#")
+        it("should shrink bufferline and show next indicator when size exceeds columns", function()
+            vim.o.columns = 20
+            for i = 1, 2 do
+                vim.cmd("e abcde" .. i)
+            end
+            -- switch back to previous to shrink last buffer
+            vim.cmd("b#")
 
-                local line = bufferline.build()
+            local line = bufferline.build()
 
-                assert.equals(line,
-                              "%#TabLineSel# 1: abcde1 %*%#TabLineFill# 2: abcd%*%#TabLineFill#>%*")
-            end)
+            assert.equals(line, "%#TabLineSel# 1: abcde1 %*%#TabLineFill# 2: abcd%*%#TabLineFill#>%*")
+        end)
     end)
 end)

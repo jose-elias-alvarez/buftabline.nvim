@@ -15,36 +15,42 @@ describe("buffers", function()
         it("should get table of ordinal buffer numbers", function()
             for i = 1, 5 do
                 vim.cmd("e" .. i)
-                if (i % 2 == 0) then vim.cmd("bw") end
+                if i % 2 == 0 then
+                    vim.cmd("bw")
+                end
             end
 
             local buf_numbers = b.get_buf_numbers()
 
             assert.equals(vim.tbl_count(buf_numbers), 3)
-            for i = 1, 3 do assert.is.truthy(buf_numbers[i]) end
+            for i = 1, 3 do
+                assert.is.truthy(buf_numbers[i])
+            end
         end)
 
-        it(
-            "should get a table of non-ordinal buffer numbers when buffer_id_index is true",
-            function()
-                o.set({buffer_id_index = true})
-                for i = 1, 5 do
-                    vim.cmd("e" .. i)
-                    if (i % 2 == 0) then vim.cmd("bw") end
+        it("should get a table of non-ordinal buffer numbers when buffer_id_index is true", function()
+            o.set({ buffer_id_index = true })
+            for i = 1, 5 do
+                vim.cmd("e" .. i)
+                if i % 2 == 0 then
+                    vim.cmd("bw")
                 end
+            end
 
-                local buf_numbers = b.get_buf_numbers()
+            local buf_numbers = b.get_buf_numbers()
 
-                assert.equals(vim.tbl_count(buf_numbers), 3)
-                for i = 2, 3 do
-                    assert.not_equals(i, buf_numbers[i])
-                end
-            end)
+            assert.equals(vim.tbl_count(buf_numbers), 3)
+            for i = 2, 3 do
+                assert.not_equals(i, buf_numbers[i])
+            end
+        end)
     end)
 
     describe("get_current_buf_number", function()
         it("should return current buffer's ordinal number", function()
-            for i = 1, 5 do vim.cmd("e" .. i) end
+            for i = 1, 5 do
+                vim.cmd("e" .. i)
+            end
             local buf_numbers = b.get_buf_numbers()
 
             vim.cmd("buffer " .. buf_numbers[3])
@@ -55,10 +61,14 @@ describe("buffers", function()
     end)
 
     describe("get_buffers", function()
-        after_each(function() o.set({icons = false}) end)
+        after_each(function()
+            o.set({ icons = false })
+        end)
 
         it("should get table of open buffers and set current buffer", function()
-            for i = 1, 5 do vim.cmd("e" .. i) end
+            for i = 1, 5 do
+                vim.cmd("e" .. i)
+            end
 
             local buffers = b.get_buffers()
 
@@ -80,9 +90,9 @@ describe("buffers", function()
         end)
 
         it("should set buffer icon info if icons option is set", function()
-            o.set({icons = true})
+            o.set({ icons = true })
             local get_icon = stub.new().returns("icon", "icon_hl")
-            package.loaded["nvim-web-devicons"] = {get_icon = get_icon}
+            package.loaded["nvim-web-devicons"] = { get_icon = get_icon }
 
             vim.cmd("e testdir/testfile")
             local buffers = b.get_buffers()

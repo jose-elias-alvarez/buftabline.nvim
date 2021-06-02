@@ -20,33 +20,37 @@ local create_hlgroup = function(name, fg, bg)
 end
 
 local set_hlgroup = function(tab)
-    local label, current, icon_hl, shrank = tab.label, tab.current, tab.icon_hl,
-                                            tab.shrank
+    local label, current, icon_hl, shrank = tab.label, tab.current, tab.icon_hl, tab.shrank
 
-    local hlgroup = current and o.get().hlgroup_current or
-                        o.get().hlgroup_normal
-    if not hl_exists(hlgroup) then return label end
+    local hlgroup = current and o.get().hlgroup_current or o.get().hlgroup_normal
+    if not hl_exists(hlgroup) then
+        return label
+    end
 
     local icon_colors = o.get().icon_colors
-    if icon_hl and not shrank and
-        (icon_colors == true or (icon_colors == "current" and current) or
-            (icon_colors == "normal" and not current)) then
+    if
+        icon_hl
+        and not shrank
+        and (icon_colors == true or (icon_colors == "current" and current) or (icon_colors == "normal" and not current))
+    then
         local split = vim.split(vim.trim(label), " ")
         -- assume icon is last element
         local icon = split[vim.tbl_count(split)]
-        if not icon then return add_hlgroup(hlgroup, label) end
-
-        -- create new hlgroup that uses devicons color for fg and tabline color for bg
-        local merged_icon_hl = current and icon_hl .. "Current" or icon_hl ..
-                                   "Normal"
-        if not hl_exists(merged_icon_hl) then
-            create_hlgroup(merged_icon_hl,
-                           get_hl_attribute(icon_hl, "foreground"),
-                           get_hl_attribute(hlgroup, "background"))
+        if not icon then
+            return add_hlgroup(hlgroup, label)
         end
 
-        label = u.string_replace(label, icon,
-                                 add_hlgroup(merged_icon_hl, u.pad(icon, true)))
+        -- create new hlgroup that uses devicons color for fg and tabline color for bg
+        local merged_icon_hl = current and icon_hl .. "Current" or icon_hl .. "Normal"
+        if not hl_exists(merged_icon_hl) then
+            create_hlgroup(
+                merged_icon_hl,
+                get_hl_attribute(icon_hl, "foreground"),
+                get_hl_attribute(hlgroup, "background")
+            )
+        end
+
+        label = u.string_replace(label, icon, add_hlgroup(merged_icon_hl, u.pad(icon, true)))
     end
 
     return add_hlgroup(hlgroup, label)

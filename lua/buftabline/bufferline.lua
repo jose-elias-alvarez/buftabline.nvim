@@ -11,9 +11,15 @@ local M = {}
 
 local get_flags = function(buffer)
     local flags = {}
-    if buffer.readonly then table.insert(flags, "[RO]") end
-    if not buffer.modifiable then table.insert(flags, "[-]") end
-    if buffer.modified then table.insert(flags, "[+]") end
+    if buffer.readonly then
+        table.insert(flags, "[RO]")
+    end
+    if not buffer.modifiable then
+        table.insert(flags, "[-]")
+    end
+    if buffer.modified then
+        table.insert(flags, "[+]")
+    end
     return table.concat(flags)
 end
 
@@ -37,7 +43,9 @@ local get_name = function(buffer)
         name = string.format(index_format .. "%s", index, name)
     end
 
-    if buffer.icon then name = name .. " " .. buffer.icon end
+    if buffer.icon then
+        name = name .. " " .. buffer.icon
+    end
     return name
 end
 M.get_name = get_name
@@ -46,7 +54,9 @@ local generate_label = function(buffer)
     return string.format(u.pad("%s"), get_name(buffer))
 end
 
-local format_tab = function(tab) return set_hlgroup(tab) end
+local format_tab = function(tab)
+    return set_hlgroup(tab)
+end
 
 local generate_tabs = function(buffers)
     local tabs = {}
@@ -56,17 +66,23 @@ local generate_tabs = function(buffers)
 
         local tab_width = strchars(label)
         -- this is far from scientific but seems to work
-        if o.get().icons then tab_width = tab_width + 1 end
+        if o.get().icons then
+            tab_width = tab_width + 1
+        end
 
         table.insert(tabs, {
             label = label,
             width = tab_width,
             current = buffer.current,
-            icon_hl = buffer.icon_hl
+            icon_hl = buffer.icon_hl,
         })
 
-        if buffer.current then current_pos = width end
-        if current_pos == 0 then width = width + tab_width end
+        if buffer.current then
+            current_pos = width
+        end
+        if current_pos == 0 then
+            width = width + tab_width
+        end
     end
     return tabs, current_pos
 end
@@ -74,10 +90,14 @@ end
 local tab_is_visible = function(tab, pos, current_pos, columns)
     local side = pos - tab.width <= current_pos and "left" or "right"
     -- vim handles shrinking left-side tabs automatically
-    if side == "left" then return true end
+    if side == "left" then
+        return true
+    end
 
     -- always insert current tab and fully visible tabs to the right of the current tab
-    if tab.current or pos <= columns then return true end
+    if tab.current or pos <= columns then
+        return true
+    end
 
     -- determine if right tab can shrink to fit remaining space
     local budget = columns - pos + tab.width
@@ -100,11 +120,15 @@ local generate_bufferline = function(tabs, current_pos)
         pos = pos + tab.width
 
         local is_visible = tab_is_visible(tab, pos, current_pos, columns)
-        if is_visible then table.insert(bufferline, format_tab(tab)) end
-        if not is_visible or tab.shrank then hidden = true end
+        if is_visible then
+            table.insert(bufferline, format_tab(tab))
+        end
+        if not is_visible or tab.shrank then
+            hidden = true
+        end
     end
     if hidden then
-        table.insert(bufferline, format_tab({label = next_indicator}))
+        table.insert(bufferline, format_tab({ label = next_indicator }))
     end
     return table.concat(bufferline)
 end
