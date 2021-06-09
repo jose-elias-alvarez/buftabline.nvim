@@ -2,12 +2,10 @@ local b = require("buftabline.buffers")
 local o = require("buftabline.options")
 local bufferline = require("buftabline.bufferline")
 
-local defaults = vim.deepcopy(o.get())
-
 describe("bufferline", function()
     after_each(function()
         vim.cmd("bufdo! bwipeout!")
-        o.set(defaults)
+        o.reset()
     end)
 
     describe("get_name", function()

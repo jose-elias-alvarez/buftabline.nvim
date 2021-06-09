@@ -3,12 +3,10 @@ local stub = require("luassert.stub")
 local b = require("buftabline.buffers")
 local o = require("buftabline.options")
 
-local defaults = vim.deepcopy(o.get())
-
 describe("buffers", function()
     after_each(function()
         vim.cmd("bufdo! bwipeout!")
-        o.set(defaults)
+        o.reset()
     end)
 
     describe("get_buf_numbers", function()
@@ -100,6 +98,32 @@ describe("buffers", function()
             assert.stub(get_icon).was_called()
             assert.equals(buffers[1].icon, "icon")
             assert.equals(buffers[1].icon_hl, "icon_hl")
+        end)
+
+        it("should skip over no name buffers and modify index accordingly", function()
+            vim.cmd("e testdir/testfile")
+            vim.cmd("e testdir/other-file")
+            vim.cmd("enew")
+            vim.cmd("vsplit testdir2/testfile")
+
+            local buffers = b.get_buffers()
+
+            assert.equals(vim.tbl_count(buffers), 3)
+            assert.equals(buffers[1].index, 1)
+            assert.equals(buffers[2].index, 2)
+            assert.equals(buffers[3].index, 3)
+        end)
+
+        it("should include no name buffers when show_no_name_buffers is set", function()
+            o.set({ show_no_name_buffers = true })
+            vim.cmd("e testdir/testfile")
+            vim.cmd("e testdir/other-file")
+            vim.cmd("enew")
+            vim.cmd("vsplit testdir2/testfile")
+
+            local buffers = b.get_buffers()
+
+            assert.equals(vim.tbl_count(buffers), 4)
         end)
     end)
 end)
