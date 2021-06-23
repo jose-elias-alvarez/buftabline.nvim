@@ -12,9 +12,9 @@ local M = {}
 
 local get_buf_numbers = function()
     local numbers = {}
-    for i, bufinfo in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
+    for _, bufinfo in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
         if bufinfo.name ~= "" or o.get().show_no_name_buffers then
-            numbers[i] = bufinfo.bufnr
+            table.insert(numbers, bufinfo.bufnr)
         end
     end
     return numbers
