@@ -109,104 +109,25 @@ local options = {
 }
 ```
 
-### modifier
-
-Allows modifying the format of each buffer in the tabline. See `:help filename-modifiers`.
-
-### index_format
-
-Allows modifying the format of the index shown before each file's name in the
-tabline. Lua's `string.format` function uses [C
-directives](http://www.cplusplus.com/reference/cstdio/printf/), and you can also
-change spacing and punctuation.
-
-For example, setting `index_format = "(%d) "` will format your tabs like this:
-
-![index_format](./screenshots/index_format.png)
-
-### buffer_id_index
-
-Uses the buffer numeric ID as the buffer index (instead of a sequential index).
-
-### padding
-
-Each digit of `padding` adds a space around each side of each tab. Set to `0` or
-`false` to disable padding entirely.
-
-### icons
-
-Enables filetype icons via
-[nvim-web-devicons](https://github.com/kyazdani42/nvim-web-devicons). Even if
-you've installed nvim-web-devicons, you must explicitly enable icons by setting
-this option to `true`, in case you don't want them in your tabline.
-
-![devicons](./screenshots/devicons.png)
-
-### icon_colors
-
-Shows nvim-web-devicon's built-in icon colors in your tabline. Defaults to `false`.
-
-Can be `true` (always show icon colors), `current` (show icon color for current
-tab), and `normal` (show icon colors for background tabs).
-
-Depending on your tabline, you may want to change the plugin's default highlight
-groups for better visibility.
-
-### start_hidden
-
-Hides the tabline when Neovim starts by setting `showtabline` to `0`. Disabled
-by default, but potentially useful in combination with `ToggleBuftabline`.
-
-### auto_hide
-
-Shows the tabline when you have more than one buffer open and hides it when you
-don't. Not compatible with `start_hidden`.
-
-### disable_commands
-
-Stops the plugin from creating commands in case you want to define your own.
-
-### go_to_maps
-
-Maps `<Leader>0-9` to the corresponding `go_to_buffer` command.
-
-### kill_maps
-
-Maps `<Leader>c0-9` to the corresponding `kill_buffer` command.
-
-### show_no_name_buffers
-
-Does precisely what you'd imagine.
-
-### next_indicator
-
-Defines the indicator shown when the bufferline truncates the rightmost tab or
-when there are more tabs to show. Set to `>` by default to match the left side
-of the tabline, which Neovim will automatically truncate.
-
-### custom_command
-
-Defines the command that runs when calling `custom_command(number)`. Note that
-calling the function without defining a command will throw an error.
-
-A practical example: setting `custom_command` to `vertical sb` and calling `:lua require("buftabline").custom_command(2)` will open the 2nd buffer in your
-tabline in a vertical split.
-
-### custom_map_prefix
-
-A simple way to map your `custom_command`. Setting `custom_map_prefix` to `v`
-and setting `custom_command` to `vertical sb` will map `<Leader>v0-9` to open
-the corresponding buffer in a vertical split.
-
-Does nothing if you haven't set `custom_command`.
-
-### hlgroup_current
-
-Sets the highlight group for the current buffer.
-
-### hlgroup_normal
-
-Sets the highlight group for normal (non-current) buffers.
+| Option | Description |
+| ------ | ----------- |
+| `modifier` | Allows modifying the format of each buffer in the tabline. See `:help filename-modifiers`. |
+| `index_format` | Allows modifying the format of the index shown before each file's name in the tabline. Lua's `string.format` function uses [C directives](http://www.cplusplus.com/reference/cstdio/printf/), and you can also change spacing and punctuation. <br>For example, setting `index_format = "(%d) "` will format your tabs like this: ![index_format](./screenshots/index_format.png) |
+| `buffer_id_index` | Uses the buffer numeric ID as the buffer index (instead of a sequential index). |
+| `padding` | Each digit of `padding` adds a space around each side of each tab. Set to `0` or `false` to disable padding entirely. |
+| `icons` | Enables filetype icons via [nvim-web-devicons](https://github.com/kyazdani42/nvim-web-devicons). Even if you've installed nvim-web-devicons, you must explicitly enable icons by setting this option to `true`, in case you don't want them in your tabline.  ![devicons](./screenshots/devicons.png)||
+| `icon_colors` | Shows nvim-web-devicon's built-in icon colors in your tabline. Defaults to `false`. Can be `true` (always show icon colors), `current` (show icon color for current tab), and `normal` (show icon colors for background tabs). Depending on your tabline, you may want to change the plugin's default highlight groups for better visibility. |
+| `start_hidden` | Hides the tabline when Neovim starts by setting `showtabline` to `0`. Disabled by default, but potentially useful in combination with `ToggleBuftabline`. |
+| `auto_hide` | Shows the tabline when you have more than one buffer open and hides it when you don't. Not compatible with `start_hidden`. |
+| `disable_commands` | Stops the plugin from creating commands in case you want to define your own. |
+| `go_to_maps` | Maps `<Leader>0-9` to the corresponding `go_to_buffer` command. |
+| `kill_maps` | Maps `<Leader>c0-9` to the corresponding `kill_buffer` command. |
+| `show_no_name_buffers` | Does precisely what you'd imagine. |
+| `next_indicator` | Defines the indicator shown when the bufferline truncates the rightmost tab or when there are more tabs to show. Set to `>` by default to match the left side of the tabline, which Neovim will automatically truncate. |
+| `custom_command` | Defines the command that runs when calling `custom_command(number)`. Note that calling the function without defining a command will throw an error.  A practical example: setting `custom_command` to `vertical sb` and calling `:lua require("buftabline").custom_command(2)` will open the 2nd buffer in your tabline in a vertical split. |
+| `custom_map_prefix` | A simple way to map your `custom_command`. Setting `custom_map_prefix` to `v` and setting `custom_command` to `vertical sb` will map `<Leader>v0-9` to open the corresponding buffer in a vertical split.  Does nothing if you haven't set `custom_command`. |
+| `hlgroup_current` | Sets the highlight group for the current buffer. |
+| `hlgroup_normal` | Sets the highlight group for normal (non-current) buffers. |
 
 ## Non-goals
 
