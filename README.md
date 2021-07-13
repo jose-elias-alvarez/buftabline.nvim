@@ -78,6 +78,11 @@ local options = {
     auto_hide = false,
     disable_commands = false,
     go_to_maps = true,
+    flags = {
+        modified = "[+]",
+        not_modifiable = "[-]",
+        readonly = "[RO]",
+    },
     hlgroup_current = "TabLineSel",
     hlgroup_normal = "TabLineFill",
 }
@@ -92,6 +97,7 @@ local options = {
 | `auto_hide`        | Shows the tabline when you have more than one buffer open and hides it when you don't. Not compatible with `start_hidden`.                 |
 | `disable_commands` | Stops the plugin from defining commands.                                                                                                   |
 | `go_to_maps`       | Maps `<Leader>0-9` to the corresponding `go_to_buffer` command.                                                                            |
+| `flags`            | Sets the flags used to mark a buffer's status.                                                                                             |
 | `hlgroup_current`  | Sets the highlight group for the current buffer.                                                                                           |
 | `hlgroup_normal`   | Sets the highlight group for normal (non-current) buffers.                                                                                 |
 

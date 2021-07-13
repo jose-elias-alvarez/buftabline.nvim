@@ -9,20 +9,21 @@ local get_hl = function(tab)
 end
 
 local get_flags = function(tab)
-    local flags = {}
+    local flags = o.get().flags
+    local buffer_flags = {}
     if tab.buf.changed > 0 then
-        table.insert(flags, "[+]")
+        table.insert(buffer_flags, flags.modified)
     end
     if not api.nvim_buf_get_option(tab.buf.bufnr, "modifiable") then
-        table.insert(flags, "[-]")
+        table.insert(buffer_flags, flags.not_modifiable)
     end
     if api.nvim_buf_get_option(tab.buf.bufnr, "readonly") then
-        table.insert(flags, "[RO]")
+        table.insert(buffer_flags, flags.readonly)
     end
-    if vim.tbl_count(flags) > 0 then
-        table.insert(flags, 1, " ")
+    if vim.tbl_count(buffer_flags) > 0 then
+        table.insert(buffer_flags, 1, " ")
     end
-    return table.concat(flags)
+    return table.concat(buffer_flags)
 end
 
 local Tab = {}

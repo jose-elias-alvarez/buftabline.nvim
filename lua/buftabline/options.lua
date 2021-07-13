@@ -6,6 +6,11 @@ local defaults = {
     auto_hide = false,
     disable_commands = false,
     go_to_maps = true,
+    flags = {
+        modified = "[+]",
+        not_modifiable = "[-]",
+        readonly = "[RO]",
+    },
     hlgroup_current = "TabLineSel",
     hlgroup_normal = "TabLineFill",
 }
