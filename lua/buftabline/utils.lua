@@ -1,37 +1,39 @@
-local o = require("buftabline.options")
+local api = vim.api
+local format = string.format
 
 local M = {}
 
-M.string_replace = function(str, original, replacement)
-    local found, found_end = string.find(str, original, nil, true)
-    if not found then
-        return
-    end
-
-    if str == original then
-        return replacement
-    end
-
-    local first_half = string.sub(str, 0, found - 1)
-    local second_half = string.sub(str, found_end + 1)
-
-    return first_half .. replacement .. second_half
+M.define_command = function(name, fn)
+    vim.cmd(format("command! %s lua require'buftabline.commands'.%s", name, fn))
 end
 
-M.pad = function(text, right_only)
-    local padding = o.get().padding
-    if not padding or padding == 0 then
-        return text
-    end
+M.define_autocmd = function(event, fn)
+    api.nvim_exec(
+        format(
+            [[
+        augroup Buftabline
+            autocmd %s * lua require'buftabline.commands'.%s
+        augroup END
+            ]],
+            event,
+            fn
+        ),
+        false
+    )
+end
 
-    local padded = { text }
-    for _ = 1, padding do
-        table.insert(padded, " ")
-        if not right_only then
-            table.insert(padded, 1, " ")
-        end
+M.map = function(opts)
+    local prefix, cmd, max = opts.prefix, opts.cmd, opts.max
+    max = max or 9
+
+    for i = 0, max do
+        api.nvim_set_keymap(
+            "n",
+            prefix .. i,
+            format(":lua require'buftabline.commands'.buftarget(%d, '%s')<CR>", i, cmd),
+            { silent = true, nowait = true, noremap = true }
+        )
     end
-    return table.concat(padded)
 end
 
 return M
