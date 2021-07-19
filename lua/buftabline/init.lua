@@ -16,7 +16,7 @@ M.setup = function(opts)
         u.define_command("BufPrev", "prev_buffer()")
     end
     if o.get().auto_hide then
-        u.define_autocmd("BufEnter", "auto_hide()")
+        u.define_autocmd("BufAdd,BufDelete", "auto_hide()")
     end
     if o.get().go_to_maps then
         u.map({ prefix = "<Leader>", cmd = "buffer" })
