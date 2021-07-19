@@ -83,14 +83,20 @@ local options = {
         not_modifiable = "[-]",
         readonly = "[RO]",
     },
-    hlgroup_current = "TabLineSel",
-    hlgroup_normal = "TabLineFill",
+    hlgroups = {
+        current = "TabLineSel",
+        normal = "TabLine",
+        active = nil,
+        modified_current = nil,
+        modified_normal = nil,
+        modified_active = nil,
+    },
 }
 ```
 
 | Option             | Description                                                                                                                                |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `tab_format`       | Defines each tab's format (see [Format](#format) for details.)                                                                             |
+| `tab_format`       | Defines each tab's format (see [Format](#format) below for details).                                                                       |
 | `buffer_id_index`  | Uses the buffer numeric ID as the buffer index (instead of a sequential index).                                                            |
 | `icon_colors`      | Shows icon colors in your tabline. Can be `true` (always show), `current` (show for current tab), and `normal` (show for background tabs). |
 | `start_hidden`     | Hides the tabline when Neovim starts.                                                                                                      |
@@ -98,8 +104,7 @@ local options = {
 | `disable_commands` | Stops the plugin from defining commands.                                                                                                   |
 | `go_to_maps`       | Maps `<Leader>0-9` to the corresponding `go_to_buffer` command.                                                                            |
 | `flags`            | Sets the flags used to mark a buffer's status.                                                                                             |
-| `hlgroup_current`  | Sets the highlight group for the current buffer.                                                                                           |
-| `hlgroup_normal`   | Sets the highlight group for normal (non-current) buffers.                                                                                 |
+| `hlgroups`         | Sets highlight groups (see [Colors](#colors) below for details).                                                                           |
 
 ## Format
 
@@ -113,6 +118,21 @@ characters, including spaces and separators.
 | `#{b}` | The buffer's filename. If two or more buffers share a filename, it'll add the name of each buffer's enclosing directory. |
 | `#{f}` | The buffer's flags (modified, modifiable, and read-only).                                                                |
 | `#{i}` | The buffer's filetype icon.                                                                                              |
+
+## Colors
+
+The `hlgroups` option is a table that accepts the following keys to allow
+setting highlight groups based on buffer state. Setting a value to `nil` will
+cause the plugin to fall back to the next available group.
+
+| Key                | Condition                                        |
+| ------------------ | ------------------------------------------------ |
+| `current`          | The current buffer.                              |
+| `normal`           | The buffer is not current visible in any window. |
+| `active`           | The buffer is visible in another window.         |
+| `modified_current` | Same as `current`, but the buffer is modified.   |
+| `modified_normal`  | Same as `normal`, but the buffer is modified.    |
+| `modified_active`  | Same as `active`, but the buffer is modified.    |
 
 ## FAQ
 

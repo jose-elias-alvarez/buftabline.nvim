@@ -11,8 +11,14 @@ local defaults = {
         not_modifiable = "[-]",
         readonly = "[RO]",
     },
-    hlgroup_current = "TabLineSel",
-    hlgroup_normal = "TabLineFill",
+    hlgroups = {
+        current = "TabLineSel",
+        normal = "TabLineFill",
+        active = nil,
+        modified_current = nil,
+        modified_normal = nil,
+        modified_active = nil,
+    },
 }
 
 local options = vim.deepcopy(defaults)
