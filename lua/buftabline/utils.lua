@@ -22,6 +22,18 @@ M.define_autocmd = function(event, fn)
     )
 end
 
+M.clear_augroup = function()
+    api.nvim_exec(
+        format([[
+        augroup Buftabline
+            autocmd!
+        augroup END
+            ]]),
+        false
+    )
+    vim.cmd("autocmd! Buftabline")
+end
+
 M.map = function(opts)
     local prefix, cmd, max = opts.prefix, opts.cmd, opts.max
     max = max or 9

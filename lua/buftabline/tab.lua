@@ -18,21 +18,13 @@ end
 
 local get_flags = function(tab)
     local flags, buffer_flags = o.get().flags, {}
-    if tab.buf.changed > 0 and type(flags.modified) == "string" and flags.modified ~= "" then
+    if tab.buf.changed > 0 and flags.modified ~= "" then
         table.insert(buffer_flags, flags.modified)
     end
-    if
-        not api.nvim_buf_get_option(tab.buf.bufnr, "modifiable")
-        and type(flags.not_modifiable) == "string"
-        and flags.not_modifiable ~= ""
-    then
+    if not api.nvim_buf_get_option(tab.buf.bufnr, "modifiable") and flags.not_modifiable ~= "" then
         table.insert(buffer_flags, flags.not_modifiable)
     end
-    if
-        api.nvim_buf_get_option(tab.buf.bufnr, "readonly")
-        and type(flags.readonly) == "string"
-        and flags.readonly ~= ""
-    then
+    if api.nvim_buf_get_option(tab.buf.bufnr, "readonly") and flags.readonly ~= "" then
         table.insert(buffer_flags, flags.readonly)
     end
     if vim.tbl_count(buffer_flags) > 0 then
@@ -166,6 +158,7 @@ function Tab:is_ambiguous(tabs)
             return true
         end
     end
+    return false
 end
 
 return Tab

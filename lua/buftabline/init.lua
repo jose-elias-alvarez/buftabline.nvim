@@ -8,6 +8,7 @@ M.build = require("buftabline.build")
 M.map = u.map
 
 M.setup = function(opts)
+    opts = opts or {}
     o.set(opts)
 
     if not o.get().disable_commands then
