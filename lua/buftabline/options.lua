@@ -25,7 +25,7 @@ local options = vim.deepcopy(defaults)
 
 local M = {}
 M.set = function(user_options)
-    options = vim.tbl_extend("force", options, user_options)
+    options = vim.tbl_deep_extend("force", options, user_options)
 end
 
 M.get = function()

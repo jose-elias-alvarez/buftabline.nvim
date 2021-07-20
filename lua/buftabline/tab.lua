@@ -3,9 +3,9 @@ local h = require("buftabline.highlights")
 
 local api = vim.api
 local dir_separator = vim.fn.fnamemodify(vim.fn.getcwd(), ":p"):sub(-1)
-local flags, hlgroups = o.get().flags, o.get().hlgroups
 
 local get_hl = function(tab)
+    local hlgroups = o.get().hlgroups
     local name = tab.current and "current" or vim.fn.bufwinnr(tab.buf.bufnr) > 0 and "active" or "normal"
 
     -- backwards compatibility with old hlgroup_current and hlgroup_normal config keys
@@ -17,7 +17,7 @@ local get_hl = function(tab)
 end
 
 local get_flags = function(tab)
-    local buffer_flags = {}
+    local flags, buffer_flags = o.get().flags, {}
     if tab.buf.changed > 0 and type(flags.modified) == "string" and flags.modified ~= "" then
         table.insert(buffer_flags, flags.modified)
     end
