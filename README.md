@@ -9,7 +9,7 @@
 A low-config, minimalistic buffer tabline Neovim plugin written in Lua,
 shamelessly inspired by [vim-buftabline](https://github.com/ap/vim-buftabline).
 
-![buftabline](./screenshots/buftabline.png)
+<img width="740" alt="Screen Shot 2021-07-25 at 5 50 38 PM" src="https://user-images.githubusercontent.com/54108223/126893449-d735fcda-51d0-4e04-83ed-12a90cd9684f.png">
 
 ## Setup
 
