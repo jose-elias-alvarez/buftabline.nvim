@@ -42,6 +42,45 @@ describe("build", function()
             )
         end)
 
+        it("should show icons", function()
+            o.set({ tab_format = " #{i} #{n}: #{b}#{f} " })
+
+            edit_mock_files(3)
+
+            assert.equals(
+                build(),
+                "%#TabLineFill# %*%#DevIconLuaTabLineFill# %*%#TabLineFill#1: test1.lua %*%#TabLineFill# %*%#DevIconLuaTabLineFill# %*%#TabLineFill#2: test2.lua %*%#TabLineSel# %*%#DevIconLuaTabLineSel# %*%#TabLineSel#3: test3.lua %*"
+            )
+        end)
+
+        it("should handle large number of formatted tabs", function()
+            o.set({ tab_format = " #{i} #{n}: #{b}#{f} " })
+            local count = 500
+
+            edit_mock_files(count)
+
+            local expected = ""
+            for i = 1, count do
+                -- string.format hates this
+                if i < count then
+                    expected = expected
+                        .. "%#TabLineFill# %*%#DevIconLuaTabLineFill# %*%#TabLineFill#"
+                        .. i
+                        .. ": test"
+                        .. i
+                        .. ".lua %*"
+                else
+                    expected = expected
+                        .. "%#TabLineSel# %*%#DevIconLuaTabLineSel# %*%#TabLineSel#"
+                        .. i
+                        .. ": test"
+                        .. i
+                        .. ".lua %*"
+                end
+            end
+            assert.equals(build(), expected)
+        end)
+
         it("should skip no name buffer", function()
             vim.cmd("enew")
 
@@ -61,6 +100,14 @@ describe("build", function()
             vim.cmd("b#")
 
             assert.equals(build(), "%#TabLineFill# 1: test1.lua %*%#TabLineSel# 2: test2.lua %*%#TabLineFill# 3:>%*")
+        end)
+
+        it("should disambiguate same name tabs", function()
+            edit_mock_files(1)
+
+            vim.cmd("e " .. vim.fn.getcwd() .. "/test/test1.lua")
+
+            assert.equals(build(), "%#TabLineFill# 1: buftabline.nvim/test1.lua %*%#TabLineSel# 2: test/test1.lua %*")
         end)
     end)
 
