@@ -18,7 +18,7 @@ describe("tab", function()
         }
     end)
     after_each(function()
-        mock_data = nil
+        mock_opts = nil
         api = nil
         o.reset()
     end)

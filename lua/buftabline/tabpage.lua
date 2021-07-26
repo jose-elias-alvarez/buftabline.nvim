@@ -1,35 +1,35 @@
 local o = require("buftabline.options")
 local h = require("buftabline.highlights")
 
-local get_hl = function(tabpage)
+local Tabpage = {}
+Tabpage.__index = Tabpage
+
+-- new tabpage methods
+function Tabpage:generate_hl()
     local hlgroups = o.get().hlgroups
-    return tabpage.current and (hlgroups.tabpage_current or hlgroups.current)
-        or hlgroups.tabpage_normal
-        or hlgroups.normal
+    local name = self.current and "current" or "normal"
+    self.hl = hlgroups["tabpage_" .. name] or hlgroups[name] or hlgroups.normal or ""
 end
 
-local Tabpage = {}
+function Tabpage:new(opts)
+    local tabinfo, index, current_tabnr, generator = opts.tabinfo, opts.index, opts.current_tabnr, opts.generator
 
-function Tabpage:new(t)
+    local t = {}
+    t.index = index
+    t.generator = generator
+
+    t.current = tabinfo.tabnr == current_tabnr
+    t.label = o.get().tabpage_format
+
     setmetatable(t, self)
+
+    t:generate_hl()
     return t
 end
 
-function Tabpage:__index(k)
-    if k == "current" then
-        return self.tabinfo.tabnr == self.current_tabnr
-    end
-    if k == "label" then
-        return rawget(self, k) or o.get().tabpage_format
-    end
-    if k == "hl" then
-        return get_hl(self)
-    end
-    if k == "width" then
-        return vim.fn.strchars(self.label)
-    end
-
-    return Tabpage[k] or rawget(self, k)
+-- generator methods
+function Tabpage:get_width()
+    return vim.fn.strchars(self.label)
 end
 
 function Tabpage:highlight()
@@ -38,7 +38,7 @@ end
 
 function Tabpage:generate(budget)
     self.label = self.label:gsub("#{n}", self.index)
-    budget = budget - self.width
+    budget = budget - self:get_width()
 
     self:highlight()
     return budget
