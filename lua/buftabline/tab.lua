@@ -4,70 +4,38 @@ local h = require("buftabline.highlights")
 local api = vim.api
 local dir_separator = vim.fn.fnamemodify(vim.fn.getcwd(), ":p"):sub(-1)
 
-local get_hl = function(tab)
+local Tab = {}
+Tab.__index = Tab
+
+-- new tab methods
+function Tab:generate_hl()
     local hlgroups = o.get().hlgroups
-    local name = tab.current and "current" or vim.fn.bufwinnr(tab.buf.bufnr) > 0 and "active" or "normal"
+    local name = self.current and "current" or vim.fn.bufwinnr(self.bufnr) > 0 and "active" or "normal"
 
     -- backwards compatibility with old hlgroup_current and hlgroup_normal config keys
     if o.get()["hlgroup_" .. name] then
-        return o.get()["hlgroup_" .. name]
+        self.hl = o.get()["hlgroup_" .. name]
+        return
     end
 
-    return tab.buf.changed > 0 and hlgroups["modified_" .. name] or hlgroups[name] or hlgroups.normal or ""
+    self.hl = self.changed and hlgroups["modified_" .. name] or hlgroups[name] or hlgroups.normal or ""
 end
 
-local get_flags = function(tab)
+function Tab:generate_flags()
     local flags, buffer_flags = o.get().flags, {}
-    if tab.buf.changed > 0 and flags.modified ~= "" then
+    if self.changed and flags.modified ~= "" then
         table.insert(buffer_flags, flags.modified)
     end
-    if not api.nvim_buf_get_option(tab.buf.bufnr, "modifiable") and flags.not_modifiable ~= "" then
+    if not api.nvim_buf_get_option(self.bufnr, "modifiable") and flags.not_modifiable ~= "" then
         table.insert(buffer_flags, flags.not_modifiable)
     end
-    if api.nvim_buf_get_option(tab.buf.bufnr, "readonly") and flags.readonly ~= "" then
+    if api.nvim_buf_get_option(self.bufnr, "readonly") and flags.readonly ~= "" then
         table.insert(buffer_flags, flags.readonly)
     end
     if vim.tbl_count(buffer_flags) > 0 then
         table.insert(buffer_flags, 1, " ")
     end
-    return table.concat(buffer_flags)
-end
-
-local Tab = {}
-
-function Tab:__index(k)
-    if k == "current" then
-        return self.buf.bufnr == self.current_bufnr
-    end
-    if k == "label" then
-        return rawget(self, k) or o.get().tab_format
-    end
-    if k == "name" then
-        return rawget(self, k) or vim.fn.fnamemodify(self.buf.name, ":t")
-    end
-    if k == "flags" then
-        return get_flags(self)
-    end
-    if k == "hl" then
-        return get_hl(self)
-    end
-    if k == "width" then
-        return vim.fn.strchars(self.label)
-    end
-    if k == "icon" or k == "icon_hl" or k == "icon_pos" then
-        self:generate_icon()
-    end
-
-    return Tab[k] or rawget(self, k)
-end
-
-function Tab:new(t)
-    setmetatable(t, self)
-    return t
-end
-
-function Tab:can_insert(budget)
-    return self.buf.bufnr <= self.current_bufnr or budget > 0
+    self.flags = table.concat(buffer_flags)
 end
 
 function Tab:has_icon_colors()
@@ -85,27 +53,55 @@ function Tab:has_icon_colors()
 end
 
 function Tab:generate_icon()
-    if self._has_icon then
-        return
-    end
     local icon_pos = self.label:find("#{i}")
     if not icon_pos then
         return
     end
 
     local icon, icon_hl = require("nvim-web-devicons").get_icon(
-        vim.fn.fnamemodify(self.buf.name, ":t"),
-        vim.fn.fnamemodify(self.buf.name, ":e"),
+        vim.fn.fnamemodify(self.bufname, ":t"),
+        vim.fn.fnamemodify(self.bufname, ":e"),
         { default = true }
     )
     self.icon = icon
     self.icon_pos = icon_pos
     self.icon_hl = self:has_icon_colors() and h.merge_hl(icon_hl, self.hl) or self.hl
-    self._has_icon = true
+end
+
+function Tab:new(opts)
+    local buf, index, current_bufnr, generator = opts.buf, opts.index, opts.current_bufnr, opts.generator
+
+    local t = {}
+    t.index = index
+    t.generator = generator
+
+    t.bufnr = buf.bufnr
+    t.bufname = buf.name
+    t.changed = buf.changed > 0
+    t.current = buf.bufnr == current_bufnr
+    t.position = buf.bufnr <= current_bufnr and "left" or "right"
+    t.name = vim.fn.fnamemodify(buf.name, ":t")
+    t.label = o.get().tab_format
+
+    setmetatable(t, self)
+
+    t:generate_hl()
+    t:generate_flags()
+    t:generate_icon()
+    return t
+end
+
+-- generator methods
+function Tab:can_insert(budget)
+    return self.position == "left" or budget > 0
+end
+
+function Tab:get_width()
+    return vim.fn.strchars(self.label)
 end
 
 function Tab:truncate(budget)
-    self.label = vim.fn.strcharpart(self.label, 0, self.width + budget - 1) .. ">"
+    self.label = vim.fn.strcharpart(self.label, 0, self:get_width() + budget - 1) .. ">"
     self.truncated = true
 end
 
@@ -132,9 +128,18 @@ function Tab:highlight()
         .. h.add_hl(after_icon_part, self.hl)
 end
 
+function Tab:is_ambiguous(tabs)
+    for _, existing in ipairs(tabs) do
+        if existing.name == self.name and existing.bufname ~= self.bufname then
+            return true
+        end
+    end
+    return false
+end
+
 function Tab:generate(tabs, budget)
     if self:is_ambiguous(tabs) then
-        local split_path = vim.split(self.buf.name, dir_separator)
+        local split_path = vim.split(self.bufname, dir_separator)
         self.name = split_path[#split_path - 1] .. dir_separator .. self.name
     end
 
@@ -143,22 +148,13 @@ function Tab:generate(tabs, budget)
     self.label = self.label:gsub("#{f}", self.flags)
     self.label = self.label:gsub("#{i}", self.icon or "")
 
-    budget = budget - self.width
+    budget = budget - self:get_width()
     if not self:can_insert(budget) then
         self:truncate(budget)
     end
 
     self:highlight()
     return budget
-end
-
-function Tab:is_ambiguous(tabs)
-    for _, existing in ipairs(tabs) do
-        if existing.name == self.name and existing.buf.name ~= self.buf.name then
-            return true
-        end
-    end
-    return false
 end
 
 return Tab
