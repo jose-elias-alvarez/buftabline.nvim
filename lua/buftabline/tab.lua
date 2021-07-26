@@ -138,15 +138,16 @@ function Tab:is_ambiguous(tabs)
 end
 
 function Tab:generate(tabs, budget)
+    local name = self.name
     if self:is_ambiguous(tabs) then
         local split_path = vim.split(self.bufname, dir_separator)
-        self.name = split_path[#split_path - 1] .. dir_separator .. self.name
+        name = split_path[#split_path - 1] .. dir_separator .. name
     end
 
     self.label = self.label:gsub("#{n}", self.index)
-    self.label = self.label:gsub("#{b}", self.name)
     self.label = self.label:gsub("#{f}", self.flags)
     self.label = self.label:gsub("#{i}", self.icon or "")
+    self.label = self.label:gsub("#{b}", name)
 
     budget = budget - self:get_width()
     if not self:can_insert(budget) then
