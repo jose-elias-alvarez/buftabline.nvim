@@ -123,9 +123,12 @@ function Tab:highlight()
     local icon_part = self.label:sub(self.icon_pos, icon_end)
     local after_icon_part = self.label:sub(icon_end + 1)
 
-    self.label = h.add_hl(before_icon_part, self.hl)
-        .. h.add_hl(icon_part, self.icon_hl)
-        .. h.add_hl(after_icon_part, self.hl)
+    local highlighted = {
+        h.add_hl(before_icon_part, self.hl),
+        h.add_hl(icon_part, self.icon_hl),
+        h.add_hl(after_icon_part, self.hl),
+    }
+    self.label = table.concat(highlighted)
 end
 
 function Tab:is_ambiguous(tabs)
@@ -141,7 +144,8 @@ function Tab:generate(tabs, budget)
     local name = self.name
     if self:is_ambiguous(tabs) then
         local split_path = vim.split(self.bufname, dir_separator)
-        name = split_path[#split_path - 1] .. dir_separator .. name
+        local disambiguated = { split_path[#split_path - 1], dir_separator, name }
+        name = table.concat(disambiguated)
     end
 
     self.label = self.label:gsub("#{n}", self.index)
