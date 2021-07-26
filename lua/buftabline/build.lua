@@ -1,11 +1,12 @@
 local o = require("buftabline.options")
 local b = require("buftabline.buffers")
+local u = require("buftabline.utils")
 local Tab = require("buftabline.tab")
 local Tabpage = require("buftabline.tabpage")
 
 local api = vim.api
 
-return function()
+local build = function()
     local budget = vim.o.columns
     local current_bufnr, current_tabnr = api.nvim_get_current_buf(), vim.fn.tabpagenr()
     local show_tabpages, tabpage_position = o.get().show_tabpages, o.get().tabpage_position
@@ -75,4 +76,15 @@ return function()
         table.insert(labels, #tabs + 1, table.concat(spacing))
     end
     return table.concat(labels)
+end
+
+return function()
+    local ok, result = xpcall(build, debug.traceback)
+    if ok then
+        return result
+    end
+
+    u.echo_warning("Something went wrong while building the bufferline!")
+    u.echo_warning("Please report the error and include the following trace: " .. result)
+    vim.o.tabline = ""
 end

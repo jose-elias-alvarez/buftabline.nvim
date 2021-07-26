@@ -3,6 +3,10 @@ local format = string.format
 
 local M = {}
 
+M.echo_warning = function(message)
+    api.nvim_echo({ { "buftabline.nvim: " .. message, "WarningMsg" } }, true, {})
+end
+
 M.define_command = function(name, fn)
     vim.cmd(format("command! %s lua require'buftabline.commands'.%s", name, fn))
 end
