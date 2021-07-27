@@ -1,79 +1,82 @@
 local o = require("buftabline.options")
 local b = require("buftabline.buffers")
 local u = require("buftabline.utils")
-local Tab = require("buftabline.tab")
+local Buftab = require("buftabline.buftab")
 local Tabpage = require("buftabline.tabpage")
 
 local api = vim.api
 
+local make_separator = function(budget)
+    local spacing = {}
+    for _ = 1, budget do
+        table.insert(spacing, " ")
+    end
+    return table.concat(spacing)
+end
+
+local make_buftabs = function(current)
+    local buftabs = {}
+    local buffers = b.getbufinfo()
+
+    for i, bufinfo in ipairs(buffers) do
+        table.insert(
+            buftabs,
+            Buftab:new({
+                index = i,
+                bufinfo = bufinfo,
+                current = bufinfo.bufnr == current,
+                safe = bufinfo.bufnr <= current,
+                last = i == #buffers,
+            })
+        )
+    end
+    return buftabs
+end
+local make_tabpage_tabs = function(current)
+    local tabpage_tabs = {}
+    if not o.get().show_tabpages then
+        return tabpage_tabs
+    end
+
+    local tabpages = vim.fn.gettabinfo()
+    if #tabpages <= 1 and o.get().show_tabpages ~= "always" then
+        return tabpage_tabs
+    end
+
+    for i, tabinfo in ipairs(tabpages) do
+        table.insert(
+            tabpage_tabs,
+            Tabpage:new({
+                index = i,
+                current = tabinfo.tabnr == current,
+            })
+        )
+    end
+    return tabpage_tabs
+end
+
 local build = function()
     local budget = vim.o.columns
-    local current_bufnr, current_tabnr = api.nvim_get_current_buf(), vim.fn.tabpagenr()
-    local show_tabpages, tabpage_position = o.get().show_tabpages, o.get().tabpage_position
-
-    local tabs, skipped = {}, 0
-    local tabpages = show_tabpages and vim.fn.gettabinfo()
-    local should_show_tabpages = function()
-        return show_tabpages and (#tabpages > 1 or show_tabpages == "always")
-    end
-    local should_insert_separator = function()
-        return should_show_tabpages() and tabpage_position == "right" and budget > 0
-    end
-
-    local buf_to_tab = function(buf, i)
-        return Tab:new({
-            buf = buf,
-            index = o.get().buffer_id_index and buf.bufnr or i - skipped,
-            current_bufnr = current_bufnr,
-            generator = function(tab)
-                budget = tab:generate(tabs, budget)
-                return tab.label, tab.truncated
-            end,
-        })
-    end
-    local tabpage_to_tab = function(tabinfo, i)
-        return Tabpage:new({
-            index = i,
-            tabinfo = tabinfo,
-            current_tabnr = current_tabnr,
-            generator = function(tabpage)
-                budget = tabpage:generate(budget)
-                return tabpage.label
-            end,
-        })
-    end
-
-    for i, buf in ipairs(b.getbufinfo()) do
-        if b.has_name(buf) then
-            table.insert(tabs, buf_to_tab(buf, i))
-        else
-            skipped = skipped + 1
-        end
-    end
+    local tabs = {}
+    vim.list_extend(tabs, make_tabpage_tabs(vim.fn.tabpagenr()))
+    vim.list_extend(tabs, make_buftabs(api.nvim_get_current_buf()))
 
     local labels = {}
-    if should_show_tabpages() then
-        for i, tabinfo in ipairs(tabpages) do
-            table.insert(labels, tabpage_to_tab(tabinfo, i):generator())
-        end
-    end
-    for i, tab in ipairs(tabs) do
-        local label, done = tab:generator()
-        if should_insert_separator() then
-            table.insert(labels, i, label)
-        else
+    for _, tab in ipairs(tabs) do
+        local remaining, label = tab:generate(budget, tabs)
+        budget = remaining
+        if tab.position == "right" or tabs[1].position == "left" then
             table.insert(labels, label)
+        else
+            table.insert(labels, tab.insert_at, label)
         end
-        if done then
+        if tab.last then
+            if tabs[1].position == "right" then
+                table.insert(labels, tab.insert_at + 1, make_separator(budget))
+            end
+
             break
         end
-    end
-    if should_insert_separator() then
-        local spacing = {}
-        for _ = 1, budget do
-            table.insert(spacing, " ")
-        end
-        table.insert(labels, #tabs + 1, table.concat(spacing))
     end
     return table.concat(labels)
 end

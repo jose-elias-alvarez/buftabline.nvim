@@ -29,16 +29,6 @@ describe("buffers", function()
         end)
     end)
 
-    describe("get_count", function()
-        it("should get buffer count", function()
-            for i = 1, 5 do
-                vim.cmd("e" .. i)
-            end
-
-            assert.equals(b.get_count(), 5)
-        end)
-    end)
-
     describe("get_current_index", function()
         it("should get current buffer's index", function()
             for i = 1, 5 do

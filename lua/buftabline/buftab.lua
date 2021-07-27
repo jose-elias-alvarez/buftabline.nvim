@@ -4,11 +4,11 @@ local h = require("buftabline.highlights")
 local api = vim.api
 local dir_separator = vim.fn.fnamemodify(vim.fn.getcwd(), ":p"):sub(-1)
 
-local Tab = {}
-Tab.__index = Tab
+local Buftab = {}
+Buftab.__index = Buftab
 
--- new tab methods
-function Tab:generate_hl()
+-- new buftab methods
+function Buftab:generate_hl()
     local hlgroups = o.get().hlgroups
     local name = self.current and "current" or vim.fn.bufwinnr(self.bufnr) > 0 and "active" or "normal"
 
@@ -21,7 +21,7 @@ function Tab:generate_hl()
     self.hl = self.changed and hlgroups["modified_" .. name] or hlgroups[name] or hlgroups.normal or ""
 end
 
-function Tab:generate_flags()
+function Buftab:generate_flags()
     local flags, buffer_flags = o.get().flags, {}
     if self.changed and flags.modified ~= "" then
         table.insert(buffer_flags, flags.modified)
@@ -38,7 +38,7 @@ function Tab:generate_flags()
     self.flags = table.concat(buffer_flags)
 end
 
-function Tab:has_icon_colors()
+function Buftab:has_icon_colors()
     local icon_colors = o.get().icon_colors
     if icon_colors == true then
         return true
@@ -52,8 +52,8 @@ function Tab:has_icon_colors()
     return false
 end
 
-function Tab:generate_icon()
-    local icon_pos = self.label:find("#{i}")
+function Buftab:generate_icon()
+    local icon_pos = self.format:find("#{i}")
     if not icon_pos then
         return
     end
@@ -68,20 +68,22 @@ function Tab:generate_icon()
     self.icon_hl = self:has_icon_colors() and h.merge_hl(icon_hl, self.hl) or self.hl
 end
 
-function Tab:new(opts)
-    local buf, index, current_bufnr, generator = opts.buf, opts.index, opts.current_bufnr, opts.generator
+function Buftab:new(opts)
+    local bufinfo, index, current, safe, last = opts.bufinfo, opts.index, opts.current, opts.safe, opts.last
 
     local t = {}
-    t.index = index
-    t.generator = generator
+    t.current = current
+    t.safe = safe
+    t.last = last
 
-    t.bufnr = buf.bufnr
-    t.bufname = buf.name
-    t.changed = buf.changed > 0
-    t.current = buf.bufnr == current_bufnr
-    t.position = buf.bufnr <= current_bufnr and "left" or "right"
-    t.name = vim.fn.fnamemodify(buf.name, ":t")
-    t.label = o.get().tab_format
+    t.index = o.get().buffer_id_index and bufinfo.bufnr or index
+    t.insert_at = index
+    t.bufnr = bufinfo.bufnr
+    t.bufname = bufinfo.name
+    t.changed = bufinfo.changed > 0
+    t.name = vim.fn.fnamemodify(bufinfo.name, ":t")
+    t.format = o.get().tab_format
+    t.position = "left"
 
     setmetatable(t, self)
 
@@ -92,20 +94,20 @@ function Tab:new(opts)
 end
 
 -- generator methods
-function Tab:can_insert(budget)
-    return self.position == "left" or budget > 0
+function Buftab:can_insert(adjusted)
+    return self.safe or adjusted > 0
 end
 
-function Tab:get_width()
+function Buftab:get_width()
     return vim.fn.strchars(self.label)
 end
 
-function Tab:truncate(budget)
-    self.label = vim.fn.strcharpart(self.label, 0, self:get_width() + budget - 1) .. ">"
-    self.truncated = true
+function Buftab:truncate(adjusted)
+    self.label = vim.fn.strcharpart(self.label, 0, self:get_width() + adjusted - 1) .. ">"
+    self.last = true
 end
 
-function Tab:highlight()
+function Buftab:highlight()
     if not self.icon then
         self.label = h.add_hl(self.label, self.hl)
         return
@@ -131,7 +133,7 @@ function Tab:highlight()
     self.label = table.concat(highlighted)
 end
 
-function Tab:is_ambiguous(tabs)
+function Buftab:is_ambiguous(tabs)
     for _, existing in ipairs(tabs) do
         if existing.name == self.name and existing.bufname ~= self.bufname then
             return true
@@ -140,7 +142,7 @@ function Tab:is_ambiguous(tabs)
     return false
 end
 
-function Tab:generate(tabs, budget)
+function Buftab:generate(budget, tabs)
     local name = self.name
     if self:is_ambiguous(tabs) then
         local split_path = vim.split(self.bufname, dir_separator)
@@ -148,18 +150,19 @@ function Tab:generate(tabs, budget)
         name = table.concat(disambiguated)
     end
 
+    self.label = self.format
     self.label = self.label:gsub("#{n}", self.index)
     self.label = self.label:gsub("#{f}", self.flags)
     self.label = self.label:gsub("#{i}", self.icon or "")
     self.label = self.label:gsub("#{b}", name)
 
-    budget = budget - self:get_width()
-    if not self:can_insert(budget) then
-        self:truncate(budget)
+    local adjusted = budget - self:get_width()
+    if not self:can_insert(adjusted) then
+        self:truncate(adjusted)
     end
 
     self:highlight()
-    return budget
+    return adjusted, self.label
 end
 
-return Tab
+return Buftab

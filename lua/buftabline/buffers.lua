@@ -5,29 +5,18 @@ local M = {}
 local has_name = function(b)
     return vim.fn.fnamemodify(b.name, ":t") ~= ""
 end
-M.has_name = has_name
 
 local getbufinfo = function()
-    return vim.fn.getbufinfo({ buflisted = 1 })
+    return vim.tbl_filter(has_name, vim.fn.getbufinfo({ buflisted = 1 }))
 end
 M.getbufinfo = getbufinfo
 
 M.get_numbers = function()
     local numbers = {}
     for _, buf in ipairs(getbufinfo()) do
-        if has_name(buf) then
-            table.insert(numbers, buf.bufnr)
-        end
+        table.insert(numbers, buf.bufnr)
     end
     return numbers
-end
-
-M.get_count = function()
-    local count = 0
-    for _, buf in ipairs(getbufinfo()) do
-        count = has_name(buf) and count + 1 or count
-    end
-    return count
 end
 
 M.get_current_index = function()

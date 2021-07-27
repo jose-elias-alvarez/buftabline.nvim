@@ -10,12 +10,11 @@ describe("tabpage", function()
     before_each(function()
         mock_opts = {
             tabinfo = { tabnr = 1 },
-            current_tabnr = 10,
+            current = false,
             index = 1,
         }
     end)
     after_each(function()
-        mock_opts = nil
         o.reset()
     end)
 
@@ -24,9 +23,11 @@ describe("tabpage", function()
             local tabpage = Tabpage:new(mock_opts)
 
             assert.equals(tabpage.index, mock_opts.index)
-            assert.equals(tabpage.generator, mock_opts.generator)
-            assert.equals(tabpage.current, false)
-            assert.equals(tabpage.label, o.get().tabpage_format)
+            assert.equals(tabpage.insert_at, mock_opts.index)
+            assert.equals(tabpage.current, mock_opts.current)
+            assert.equals(tabpage.format, o.get().tabpage_format)
+            assert.equals(tabpage.position, o.get().tabpage_position)
+
             assert.equals(type(tabpage.generate_hl), "function")
             assert.equals(type(tabpage.generate), "function")
             assert.equals(type(tabpage.highlight), "function")
@@ -37,7 +38,7 @@ describe("tabpage", function()
         describe("generate_hl", function()
             it("should return tabpage_current hlgroup when tab is current and option is set", function()
                 o.set({ hlgroups = { tabpage_current = "MockHl" } })
-                mock_opts.current_tabnr = mock_opts.tabinfo.tabnr
+                mock_opts.current = true
 
                 local tabpage = Tabpage:new(mock_opts)
 
@@ -45,7 +46,7 @@ describe("tabpage", function()
             end)
 
             it("should return current hlgroup when tab is current and option is not set", function()
-                mock_opts.current_tabnr = mock_opts.tabinfo.tabnr
+                mock_opts.current = true
 
                 local tabpage = Tabpage:new(mock_opts)
 

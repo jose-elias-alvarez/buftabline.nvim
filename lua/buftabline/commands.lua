@@ -51,7 +51,7 @@ end
 
 M.auto_hide = function()
     vim.schedule(function()
-        vim.o.showtabline = b.get_count() <= 1 and 0 or 2
+        vim.o.showtabline = #b.getbufinfo() <= 1 and 0 or 2
     end)
 end
 

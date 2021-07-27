@@ -12,14 +12,14 @@ function Tabpage:generate_hl()
 end
 
 function Tabpage:new(opts)
-    local tabinfo, index, current_tabnr, generator = opts.tabinfo, opts.index, opts.current_tabnr, opts.generator
+    local index, current = opts.index, opts.current
 
     local t = {}
     t.index = index
-    t.generator = generator
-
-    t.current = tabinfo.tabnr == current_tabnr
-    t.label = o.get().tabpage_format
+    t.insert_at = index
+    t.current = current
+    t.format = o.get().tabpage_format
+    t.position = o.get().tabpage_position
 
     setmetatable(t, self)
 
@@ -37,11 +37,12 @@ function Tabpage:highlight()
 end
 
 function Tabpage:generate(budget)
+    self.label = self.format
     self.label = self.label:gsub("#{n}", self.index)
-    budget = budget - self:get_width()
+    local adjusted = budget - self:get_width()
 
     self:highlight()
-    return budget
+    return adjusted, self.label
 end
 
 return Tabpage
