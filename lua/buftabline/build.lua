@@ -1,13 +1,18 @@
 local b = require("buftabline.buffers")
 local t = require("buftabline.tabpages")
 local u = require("buftabline.utils")
+local h = require("buftabline.highlights")
+local o = require("buftabline.options")
 
 local make_separator = function(budget)
     local spacing = {}
     for _ = 1, budget do
         table.insert(spacing, " ")
     end
-    return table.concat(spacing)
+
+    local to_string = table.concat(spacing)
+    local hl = o.get().hlgroups.spacing
+    return hl and h.add_hl(to_string, hl) or to_string
 end
 
 local build = function()
@@ -25,9 +30,13 @@ local build = function()
         else
             table.insert(labels, tab.insert_at, label)
         end
+
         if last then
+            local separator = make_separator(budget)
             if tabs[1].position == "right" then
-                table.insert(labels, tab.insert_at + 1, make_separator(budget))
+                table.insert(labels, tab.insert_at + 1, separator)
+            else
+                table.insert(labels, separator)
             end
 
             break

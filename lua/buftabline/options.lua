@@ -14,6 +14,7 @@ local defaults = {
     hlgroups = {
         current = "TabLineSel",
         normal = "TabLineFill",
+        spacing = nil,
         active = nil,
         modified_current = nil,
         modified_normal = nil,

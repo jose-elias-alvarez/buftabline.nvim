@@ -13,6 +13,9 @@ end
 
 describe("build", function()
     local build = require("buftabline.build")
+    local build_and_trim = function()
+        return vim.trim(build())
+    end
 
     local original_columns = vim.o.columns
     after_each(function()
@@ -26,7 +29,7 @@ describe("build", function()
             edit_mock_files(3)
 
             assert.equals(
-                build(),
+                build_and_trim(),
                 "%#TabLineFill# 1: test1.lua %*%#TabLineFill# 2: test2.lua %*%#TabLineSel# 3: test3.lua %*"
             )
         end)
@@ -38,7 +41,7 @@ describe("build", function()
             edit_mock_files(3)
 
             assert.equals(
-                build(),
+                build_and_trim(),
                 "%#TabLineFill# 4: test1.lua %*%#TabLineFill# 5: test2.lua %*%#TabLineSel# 6: test3.lua %*"
             )
         end)
@@ -49,7 +52,7 @@ describe("build", function()
             edit_mock_files(3)
 
             assert.equals(
-                build(),
+                build_and_trim(),
                 "%#TabLineFill# %*%#DevIconLuaTabLineFill# %*%#TabLineFill#1: test1.lua %*%#TabLineFill# %*%#DevIconLuaTabLineFill# %*%#TabLineFill#2: test2.lua %*%#TabLineSel# %*%#DevIconLuaTabLineSel# %*%#TabLineSel#3: test3.lua %*"
             )
         end)
@@ -88,7 +91,7 @@ describe("build", function()
             edit_mock_files(3)
 
             assert.equals(
-                build(),
+                build_and_trim(),
                 "%#TabLineFill# 1: test1.lua %*%#TabLineFill# 2: test2.lua %*%#TabLineSel# 3: test3.lua %*"
             )
         end)
@@ -100,7 +103,10 @@ describe("build", function()
             -- go to previous buffer to truncate last
             vim.cmd("b#")
 
-            assert.equals(build(), "%#TabLineFill# 1: test1.lua %*%#TabLineSel# 2: test2.lua %*%#TabLineFill# 3:>%*")
+            assert.equals(
+                build_and_trim(),
+                "%#TabLineFill# 1: test1.lua %*%#TabLineSel# 2: test2.lua %*%#TabLineFill# 3:>%*"
+            )
         end)
 
         it("should disambiguate same name tabs", function()
@@ -108,7 +114,10 @@ describe("build", function()
 
             vim.cmd("e " .. vim.fn.getcwd() .. "/test/test1.lua")
 
-            assert.equals(build(), "%#TabLineFill# 1: buftabline.nvim/test1.lua %*%#TabLineSel# 2: test/test1.lua %*")
+            assert.equals(
+                build_and_trim(),
+                "%#TabLineFill# 1: buftabline.nvim/test1.lua %*%#TabLineSel# 2: test/test1.lua %*"
+            )
         end)
     end)
 
@@ -119,7 +128,7 @@ describe("build", function()
         end)
 
         it("should not show tabpages if only one tab is open and show_tabpages is set to true", function()
-            assert.equals(build(), "%#TabLineSel# 1: test1.lua %*")
+            assert.equals(build_and_trim(), "%#TabLineSel# 1: test1.lua %*")
         end)
 
         it("should not show tabpages regardless of number if show_tabpages is set to false", function()
@@ -127,19 +136,19 @@ describe("build", function()
 
             vim.cmd("tabnew")
 
-            assert.equals(build(), "%#TabLineFill# 1: test1.lua %*")
+            assert.equals(build_and_trim(), "%#TabLineFill# 1: test1.lua %*")
         end)
 
         it("should show tabpages if more than one tab is open and show_tabpages is set to true", function()
             vim.cmd("tabnew")
 
-            assert.equals(build(), "%#TabLineFill# 1: test1.lua %*    %#TabLineFill# 1 %*%#TabLineSel# 2 %*")
+            assert.equals(build_and_trim(), "%#TabLineFill# 1: test1.lua %*    %#TabLineFill# 1 %*%#TabLineSel# 2 %*")
         end)
 
         it("should show tabpages if only one tab is open and show_tabpages is set to 'always'", function()
             o.set({ show_tabpages = "always" })
 
-            assert.equals(build(), "%#TabLineSel# 1: test1.lua %*       %#TabLineSel# 1 %*")
+            assert.equals(build_and_trim(), "%#TabLineSel# 1: test1.lua %*       %#TabLineSel# 1 %*")
         end)
 
         it("should show tabpages on left if tabpage_position is set to 'left'", function()
@@ -147,7 +156,29 @@ describe("build", function()
 
             vim.cmd("tabnew")
 
-            assert.equals(build(), "%#TabLineFill# 1 %*%#TabLineSel# 2 %*%#TabLineFill# 1: test1.lua %*")
+            assert.equals(build_and_trim(), "%#TabLineFill# 1 %*%#TabLineSel# 2 %*%#TabLineFill# 1: test1.lua %*")
+        end)
+    end)
+
+    describe("separator", function()
+        before_each(function()
+            vim.opt.columns = 24
+        end)
+
+        it("should insert highlighted separator if hlgroup is set", function()
+            o.set({ hlgroups = { spacing = "MockHl" } })
+
+            edit_mock_files(1)
+
+            assert.equals(build(), "%#TabLineSel# 1: test1.lua %*%#MockHl#          %*")
+        end)
+
+        it("should insert highlighted separator between buffers and tabs", function()
+            o.set({ hlgroups = { spacing = "MockHl" }, show_tabpages = "always" })
+
+            edit_mock_files(1)
+
+            assert.equals(build(), "%#TabLineSel# 1: test1.lua %*%#MockHl#       %*%#TabLineSel# 1 %*")
         end)
     end)
 end)

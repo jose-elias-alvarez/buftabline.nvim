@@ -88,6 +88,7 @@ local options = {
         current = "TabLineSel",
         normal = "TabLine",
         active = nil,
+        spacing = nil,
         modified_current = nil,
         modified_normal = nil,
         modified_active = nil,
@@ -140,16 +141,17 @@ The `hlgroups` option is a table that accepts the following keys to allow
 setting highlight groups based on buffer state. Leaving a value empty will
 cause the plugin to fall back to the next available group.
 
-| Key                | Condition                                                               |
-| ------------------ | ----------------------------------------------------------------------- |
-| `current`          | The current buffer.                                                     |
-| `normal`           | The buffer is not current visible in any window.                        |
-| `active`           | The buffer is visible in another window.                                |
-| `modified_current` | Same as `current`, but the buffer is modified.                          |
-| `modified_normal`  | Same as `normal`, but the buffer is modified.                           |
-| `modified_active`  | Same as `active`, but the buffer is modified.                           |
-| `tabpage_current`  | The current tabpage. Falls back to `current` if not defined.            |
-| `tabpage_normal`   | Tabpages other than the current. Falls back to `normal` if not defined. |
+| Key                | Condition                                                                                               |
+| ------------------ | ------------------------------------------------------------------------------------------------------- |
+| `current`          | The current buffer.                                                                                     |
+| `normal`           | The buffer is not current visible in any window.                                                        |
+| `active`           | The buffer is visible in another window.                                                                |
+| `spacing`          | Applied to the empty space between buffer tabs and any right-aligned tabs (or the end of the viewport). |
+| `modified_current` | Same as `current`, but the buffer is modified.                                                          |
+| `modified_normal`  | Same as `normal`, but the buffer is modified.                                                           |
+| `modified_active`  | Same as `active`, but the buffer is modified.                                                           |
+| `tabpage_current`  | The current tabpage. Falls back to `current` if not defined.                                            |
+| `tabpage_normal`   | Tabpages other than the current. Falls back to `normal` if not defined.                                 |
 
 ## FAQ
 
