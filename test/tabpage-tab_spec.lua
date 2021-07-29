@@ -3,8 +3,8 @@ local stub = require("luassert.stub")
 local o = require("buftabline.options")
 local h = require("buftabline.highlights")
 
-describe("tabpage", function()
-    local Tabpage = require("buftabline.tabpage")
+describe("tabpage-tab", function()
+    local Tabpage = require("buftabline.tabpage-tab")
 
     local mock_opts
     before_each(function()

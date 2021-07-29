@@ -1,3 +1,5 @@
+local Buftab = require("buftabline.buftab")
+
 local api = vim.api
 
 local M = {}
@@ -7,7 +9,23 @@ local has_name = function(b)
 end
 
 local getbufinfo = function()
-    return vim.tbl_filter(has_name, vim.fn.getbufinfo({ buflisted = 1 }))
+    local current_bufnr = api.nvim_get_current_buf()
+    local processed = {}
+    for _, b in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
+        if has_name(b) then
+            table.insert(processed, {
+                name = b.name,
+                bufnr = b.bufnr,
+                changed = b.changed > 0,
+                current = b.bufnr == current_bufnr,
+                safe = b.bufnr <= current_bufnr,
+                modifiable = api.nvim_buf_get_option(b.bufnr, "modifiable"),
+                readonly = api.nvim_buf_get_option(b.bufnr, "readonly"),
+                active = vim.fn.bufwinnr(b.bufnr) > 0,
+            })
+        end
+    end
+    return processed
 end
 M.getbufinfo = getbufinfo
 
@@ -26,6 +44,15 @@ M.get_current_index = function()
             return i
         end
     end
+end
+
+M.make_buftabs = function()
+    local bufinfo = getbufinfo()
+    local buftabs = {}
+    for i, buf in ipairs(bufinfo) do
+        table.insert(buftabs, Buftab:new(buf, i, i == #bufinfo))
+    end
+    return buftabs
 end
 
 return M

@@ -6,12 +6,40 @@ describe("buffers", function()
     end)
 
     describe("getbufinfo", function()
-        it("should return getbufinfo results", function()
+        it("should return processed buffer info results", function()
             for i = 1, 5 do
                 vim.cmd("e" .. i)
             end
 
-            assert.same(b.getbufinfo(), vim.fn.getbufinfo({ buflisted = 1 }))
+            local bufinfo = b.getbufinfo()
+
+            assert.equals(#bufinfo, 5)
+            assert.equals(bufinfo[1].name, vim.fn.getcwd() .. "/1")
+            assert.equals(bufinfo[1].bufnr, 1)
+            assert.equals(bufinfo[1].changed, false)
+            assert.equals(bufinfo[1].current, false)
+            assert.equals(bufinfo[1].safe, true)
+            assert.equals(bufinfo[1].modifiable, true)
+            assert.equals(bufinfo[1].readonly, false)
+            assert.equals(bufinfo[1].active, false)
+        end)
+
+        it("should set changed", function()
+            vim.cmd("e" .. 1)
+            vim.cmd("normal ahello")
+
+            local bufinfo = b.getbufinfo()
+
+            assert.equals(bufinfo[1].changed, true)
+        end)
+
+        it("should set current and active", function()
+            vim.cmd("e" .. 1)
+
+            local bufinfo = b.getbufinfo()
+
+            assert.equals(bufinfo[1].current, true)
+            assert.equals(bufinfo[1].active, true)
         end)
     end)
 
@@ -38,6 +66,20 @@ describe("buffers", function()
             vim.cmd("e 3")
 
             assert.equals(b.get_current_index(), 3)
+        end)
+    end)
+
+    describe("make_buftabs", function()
+        it("should make buftabs from open buffers", function()
+            for i = 1, 3 do
+                vim.cmd("e" .. i)
+            end
+
+            local buftabs = b.make_buftabs()
+
+            assert.equals(#buftabs, 3)
+            assert.equals(buftabs[3].index, 3)
+            assert.equals(buftabs[3].last, true)
         end)
     end)
 end)

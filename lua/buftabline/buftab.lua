@@ -1,7 +1,6 @@
 local o = require("buftabline.options")
 local h = require("buftabline.highlights")
 
-local api = vim.api
 local dir_separator = vim.fn.fnamemodify(vim.fn.getcwd(), ":p"):sub(-1)
 
 local Buftab = {}
@@ -10,7 +9,7 @@ Buftab.__index = Buftab
 -- new buftab methods
 function Buftab:generate_hl()
     local hlgroups = o.get().hlgroups
-    local name = self.current and "current" or vim.fn.bufwinnr(self.bufnr) > 0 and "active" or "normal"
+    local name = self.buf.current and "current" or self.buf.active and "active" or "normal"
 
     -- backwards compatibility with old hlgroup_current and hlgroup_normal config keys
     if o.get()["hlgroup_" .. name] then
@@ -18,18 +17,18 @@ function Buftab:generate_hl()
         return
     end
 
-    self.hl = self.changed and hlgroups["modified_" .. name] or hlgroups[name] or hlgroups.normal or ""
+    self.hl = self.buf.changed and hlgroups["modified_" .. name] or hlgroups[name] or hlgroups.normal or ""
 end
 
 function Buftab:generate_flags()
     local flags, buffer_flags = o.get().flags, {}
-    if self.changed and flags.modified ~= "" then
+    if self.buf.changed and flags.modified ~= "" then
         table.insert(buffer_flags, flags.modified)
     end
-    if not api.nvim_buf_get_option(self.bufnr, "modifiable") and flags.not_modifiable ~= "" then
+    if not self.buf.modifiable and flags.not_modifiable ~= "" then
         table.insert(buffer_flags, flags.not_modifiable)
     end
-    if api.nvim_buf_get_option(self.bufnr, "readonly") and flags.readonly ~= "" then
+    if self.buf.readonly and flags.readonly ~= "" then
         table.insert(buffer_flags, flags.readonly)
     end
     if vim.tbl_count(buffer_flags) > 0 then
@@ -44,10 +43,10 @@ function Buftab:has_icon_colors()
         return true
     end
     if icon_colors == "current" then
-        return self.current
+        return self.buf.current
     end
     if icon_colors == "normal" then
-        return not self.current
+        return not self.buf.current
     end
     return false
 end
@@ -59,8 +58,8 @@ function Buftab:generate_icon()
     end
 
     local icon, icon_hl = require("nvim-web-devicons").get_icon(
-        vim.fn.fnamemodify(self.bufname, ":t"),
-        vim.fn.fnamemodify(self.bufname, ":e"),
+        vim.fn.fnamemodify(self.buf.name, ":t"),
+        vim.fn.fnamemodify(self.buf.name, ":e"),
         { default = true }
     )
     self.icon = icon
@@ -68,20 +67,14 @@ function Buftab:generate_icon()
     self.icon_hl = self:has_icon_colors() and h.merge_hl(icon_hl, self.hl) or self.hl
 end
 
-function Buftab:new(opts)
-    local bufinfo, index, current, safe, last = opts.bufinfo, opts.index, opts.current, opts.safe, opts.last
-
+function Buftab:new(buf, index, last)
     local t = {}
-    t.current = current
-    t.safe = safe
+    t.index = o.get().buffer_id_index and buf.bufnr or index
+    t.insert_at = index
     t.last = last
 
-    t.index = o.get().buffer_id_index and bufinfo.bufnr or index
-    t.insert_at = index
-    t.bufnr = bufinfo.bufnr
-    t.bufname = bufinfo.name
-    t.changed = bufinfo.changed > 0
-    t.name = vim.fn.fnamemodify(bufinfo.name, ":t")
+    t.buf = buf
+    t.name = vim.fn.fnamemodify(buf.name, ":t")
     t.format = o.get().tab_format
     t.position = "left"
 
@@ -95,7 +88,7 @@ end
 
 -- generator methods
 function Buftab:can_insert(adjusted)
-    return self.safe or adjusted > 0
+    return self.buf.safe or adjusted > 0
 end
 
 function Buftab:get_width()
@@ -135,7 +128,7 @@ end
 
 function Buftab:is_ambiguous(tabs)
     for _, existing in ipairs(tabs) do
-        if existing.name == self.name and existing.bufname ~= self.bufname then
+        if existing.name == self.name and existing.buf.name ~= self.buf.name then
             return true
         end
     end
@@ -145,7 +138,7 @@ end
 function Buftab:generate(budget, tabs)
     local name = self.name
     if self:is_ambiguous(tabs) then
-        local split_path = vim.split(self.bufname, dir_separator)
+        local split_path = vim.split(self.buf.name, dir_separator)
         local disambiguated = { split_path[#split_path - 1], dir_separator, name }
         name = table.concat(disambiguated)
     end
@@ -162,7 +155,7 @@ function Buftab:generate(budget, tabs)
     end
 
     self:highlight()
-    return adjusted, self.label
+    return adjusted, self.label, self.last
 end
 
 return Buftab

@@ -7,16 +7,18 @@ local h = require("buftabline.highlights")
 describe("Buftab", function()
     local Buftab = require("buftabline.buftab")
 
-    local mock_opts, api
+    local mock_buf, api
     before_each(function()
         api = mock(vim.api, true)
-        mock_opts = {
-            bufinfo = { bufnr = 5, name = "/mock/path/mock-file.lua", changed = 0 },
+        mock_buf = {
+            bufnr = 5,
+            name = "/mock/path/mock-file.lua",
+            changed = false,
             current = false,
             safe = true,
             last = false,
-            index = 1,
-            generator = stub.new(),
+            modifiable = true,
+            readonly = false,
         }
     end)
     after_each(function()
@@ -25,18 +27,11 @@ describe("Buftab", function()
 
     describe("new", function()
         it("should create new tab with methods from data", function()
-            local tab = Buftab:new(mock_opts)
+            local tab = Buftab:new(mock_buf, 1, false)
 
-            assert.equals(tab.current, mock_opts.current)
-            assert.equals(tab.safe, mock_opts.safe)
-            assert.equals(tab.last, mock_opts.last)
-
-            assert.equals(tab.index, mock_opts.index)
-            assert.equals(tab.insert_at, mock_opts.index)
-            assert.equals(tab.bufnr, mock_opts.bufinfo.bufnr)
-            assert.equals(tab.bufname, mock_opts.bufinfo.name)
-            assert.equals(tab.changed, false)
-            assert.equals(tab.current, false)
+            assert.equals(tab.index, 1)
+            assert.equals(tab.insert_at, 1)
+            assert.equals(tab.buf, mock_buf)
             assert.equals(tab.name, "mock-file.lua")
             assert.equals(tab.position, "left")
             assert.equals(tab.format, o.get().tab_format)
@@ -53,149 +48,124 @@ describe("Buftab", function()
             assert.equals(type(tab.generate), "function")
         end)
 
-        it("should set changed to true if bufinfo.changed > 0", function()
-            mock_opts.bufinfo.changed = 1
-
-            local tab = Buftab:new(mock_opts)
-
-            assert.equals(tab.changed, true)
-        end)
-
         it("should set index from bufnr if buffer_id_index option is set", function()
             o.set({ buffer_id_index = true })
 
-            local tab = Buftab:new(mock_opts)
+            local tab = Buftab:new(mock_buf, 1, false)
 
-            assert.equals(tab.index, mock_opts.bufinfo.bufnr)
+            assert.equals(tab.index, mock_buf.bufnr)
         end)
     end)
 
     describe("new tab methods", function()
         describe("generate_flags", function()
-            local modifiable, readonly
-            before_each(function()
-                modifiable = true
-                readonly = false
-                api.nvim_buf_get_option.invokes(function(_, opt)
-                    return opt == "modifiable" and modifiable or opt == "readonly" and readonly
-                end)
-            end)
-
             it("should insert flag + space", function()
-                mock_opts.bufinfo.changed = 1
+                mock_buf.changed = true
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab.flags, " " .. o.get().flags.modified)
             end)
 
             it("should insert flag + space", function()
-                mock_opts.bufinfo.changed = 1
+                mock_buf.changed = true
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab.flags, " " .. o.get().flags.modified)
             end)
 
-            it("should contain modified flag if bufinfo.changed", function()
-                mock_opts.bufinfo.changed = 1
+            it("should contain modified flag if buffer is changed", function()
+                mock_buf.changed = true
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.truthy(tab.flags:find(o.get().flags.modified, nil, true))
             end)
 
             it("should contain not modifiable flag if buffer is not modifiable", function()
-                modifiable = false
+                mock_buf.modifiable = false
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.truthy(tab.flags:find(o.get().flags.not_modifiable, nil, true))
             end)
 
             it("should contain readonly flag if buffer is read-only", function()
-                readonly = true
+                mock_buf.readonly = true
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.truthy(tab.flags:find(o.get().flags.readonly, nil, true))
             end)
 
             it("should not insert modified flag if set to empty string", function()
-                modifiable = true
-                readonly = false
-                mock_opts.bufinfo.changed = 1
+                mock_buf.readonly = false
+                mock_buf.modifiable = true
+                mock_buf.changed = false
                 o.set({ flags = { modified = "" } })
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab.flags, "")
             end)
 
             it("should not insert not modifiable flag if set to empty string", function()
                 o.set({ flags = { not_modifiable = "" } })
-                modifiable = false
+                mock_buf.modifiable = false
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab.flags, "")
             end)
 
             it("should not insert readonly flag if set to empty string", function()
                 o.set({ flags = { readonly = "" } })
-                readonly = true
+                mock_buf.readonly = true
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab.flags, "")
             end)
         end)
 
         describe("generate_hl", function()
-            before_each(function()
-                vim.fn.bufwinnr = stub.new().returns(0)
-            end)
-
-            after_each(function()
-                vim.fn.bufwinnr:revert()
-            end)
-
             it("should set current hlgroup", function()
-                mock_opts.current = true
+                mock_buf.current = true
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab.hl, o.get().hlgroups.current)
             end)
 
             it("should set old current hlgroup", function()
                 o.set({ hlgroup_current = "TestHl" })
-                mock_opts.current = true
+                mock_buf.current = true
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab.hl, "TestHl")
             end)
 
             it("should set active hlgroup if set", function()
                 o.set({ hlgroups = { active = "TestHl" } })
-                vim.fn.bufwinnr.returns(1)
+                mock_buf.active = true
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab.hl, "TestHl")
             end)
 
             it("should set normal hlgroup if active hlgroup is not set", function()
-                vim.fn.bufwinnr.returns(1)
+                mock_buf.active = true
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab.hl, o.get().hlgroups.normal)
             end)
 
             it("should set normal hlgroup", function()
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab.hl, o.get().hlgroups.normal)
             end)
@@ -203,17 +173,17 @@ describe("Buftab", function()
             it("should set old normal hlgroup", function()
                 o.set({ hlgroup_normal = "TestHl" })
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab.hl, "TestHl")
             end)
 
             it("should set modified hlgroup if buffer if set", function()
                 o.set({ hlgroups = { modified_current = "TestHl" } })
-                mock_opts.bufinfo.changed = 1
-                mock_opts.current = true
+                mock_buf.changed = true
+                mock_buf.current = true
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab.hl, "TestHl")
             end)
@@ -221,16 +191,16 @@ describe("Buftab", function()
 
         describe("has_icon_colors", function()
             it("should return true if icon_colors is set to true", function()
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab:has_icon_colors(), true)
             end)
 
             it("should return true if icon_colors is set to current and tab is current", function()
                 o.set({ icon_colors = "current" })
-                mock_opts.current = true
+                mock_buf.current = true
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab:has_icon_colors(), true)
             end)
@@ -238,7 +208,7 @@ describe("Buftab", function()
             it("should return false if icon_colors is set to current and tab is not current", function()
                 o.set({ icon_colors = "current" })
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab:has_icon_colors(), false)
             end)
@@ -246,16 +216,16 @@ describe("Buftab", function()
             it("should return true if icon_colors is set to normal and tab is normal", function()
                 o.set({ icon_colors = "normal" })
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab:has_icon_colors(), true)
             end)
 
             it("should return false if icon_colors is set to normal and tab is not normal", function()
                 o.set({ icon_colors = "normal" })
-                mock_opts.current = true
+                mock_buf.current = true
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab:has_icon_colors(), false)
             end)
@@ -263,7 +233,7 @@ describe("Buftab", function()
             it("should return false if icon_colors is set to false", function()
                 o.set({ icon_colors = false })
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab:has_icon_colors(), false)
             end)
@@ -284,7 +254,7 @@ describe("Buftab", function()
             end)
 
             it("should generate icon, icon_pos, and merged icon_hl", function()
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 tab:generate_icon()
 
@@ -297,7 +267,7 @@ describe("Buftab", function()
 
             it("should get own hlgroup when has_icon_colors returns false", function()
                 o.set({ icon_colors = false })
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 tab:generate_icon()
 
@@ -310,31 +280,31 @@ describe("Buftab", function()
     describe("generator methods", function()
         describe("can_insert", function()
             it("should return true if tab is on left side", function()
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab:can_insert(0), true)
             end)
 
             it("should return true if tab is current", function()
-                mock_opts.current = true
+                mock_buf.current = true
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab:can_insert(0), true)
             end)
 
             it("should return true if tab is safe", function()
-                mock_opts.safe = true
+                mock_buf.safe = false
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab:can_insert(10), true)
             end)
 
             it("should return false if tab is not safe and no budget remains", function()
-                mock_opts.safe = false
+                mock_buf.safe = false
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab:can_insert(0), false)
             end)
@@ -342,7 +312,7 @@ describe("Buftab", function()
 
         describe("get_width", function()
             it("should return tab label width", function()
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 tab.label = "test"
 
@@ -350,7 +320,7 @@ describe("Buftab", function()
             end)
 
             it("should handle multibyte character", function()
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 tab.label = "" -- lua devicon
 
@@ -360,7 +330,7 @@ describe("Buftab", function()
 
         describe("truncate", function()
             it("should truncate tab to fit budget + separator", function()
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
                 tab.label = "test"
 
                 tab:truncate(-2)
@@ -372,25 +342,25 @@ describe("Buftab", function()
 
         describe("is_ambiguous", function()
             it("should return true if existing tab name matches but buffer name does not", function()
-                local tabs = { { name = "mock-file.lua", bufname = "other" } }
+                local tabs = { { name = "mock-file.lua", buf = { name = "other" } } }
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab:is_ambiguous(tabs), true)
             end)
 
             it("should return false if existing tab name and buffer name match", function()
-                local tabs = { { name = "mock-file.lua", bufname = mock_opts.bufinfo.name } }
+                local tabs = { { name = "mock-file.lua", buf = { name = mock_buf.name } } }
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab:is_ambiguous(tabs), false)
             end)
 
             it("should return false if tab does not overlap with existing tabs", function()
-                local tabs = { { name = "other-file.lua", bufname = "other" } }
+                local tabs = { { name = "other-file.lua", buf = { name = "other" } } }
 
-                local tab = Buftab:new(mock_opts)
+                local tab = Buftab:new(mock_buf, 1, false)
 
                 assert.equals(tab:is_ambiguous(tabs), false)
             end)
@@ -399,11 +369,7 @@ describe("Buftab", function()
         describe("generate", function()
             local tab
             before_each(function()
-                api.nvim_buf_get_option.invokes(function(_, opt)
-                    return opt == "modifiable" and true or opt == "readonly" and false
-                end)
-
-                tab = Buftab:new(mock_opts)
+                tab = Buftab:new(mock_buf, 1, false)
                 tab.name = "test"
                 tab.is_ambiguous = stub.new()
                 tab.can_insert = stub.new()
@@ -440,18 +406,20 @@ describe("Buftab", function()
                 assert.equals(tab.label, "icon")
             end)
 
-            it("should return budget minus tab width", function()
-                local remaining = tab:generate(100, {})
-
-                assert.equals(remaining, 100 - tab:get_width())
-            end)
-
             it("should call truncate if can_insert returns false", function()
                 tab.can_insert.returns(false)
 
                 tab:generate(100, {})
 
                 assert.stub(tab.truncate).was_called()
+            end)
+
+            it("should return adjusted budget, label, and last", function()
+                local adjusted, label, last = tab:generate(100, {})
+
+                assert.equals(adjusted, 100 - tab:get_width())
+                assert.equals(label, " 1: test ")
+                assert.equals(last, false)
             end)
         end)
     end)

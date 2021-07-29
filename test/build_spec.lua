@@ -8,6 +8,7 @@ end
 
 local close_all = function()
     vim.cmd("bufdo! bwipeout!")
+    vim.cmd("silent tabonly")
 end
 
 describe("build", function()
