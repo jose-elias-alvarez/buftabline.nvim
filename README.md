@@ -103,7 +103,7 @@ local options = {
 | Option             | Description                                                                                                                                                                                                 |
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `tab_format`       | Defines how the plugin formats buffer tabs (see [Format](#format) below for details).                                                                                                                       |
-| `buffer_id_index`  | Uses the buffer numeric ID as the buffer index (instead of a sequential index).                                                                                                                             |
+| `buffer_id_index`  | Uses buffer numbers (the ones shown in `:ls`) instead of sequential indexes.                                                                                                                                |
 | `icon_colors`      | Shows icon colors in your tabline. Can be `true` (always show), `current` (show for current tab), and `normal` (show for background tabs).                                                                  |
 | `start_hidden`     | Hides the tabline when Neovim starts.                                                                                                                                                                       |
 | `auto_hide`        | Shows the tabline when you have more than one buffer open and hides it when you don't. Not compatible with `start_hidden`.                                                                                  |
@@ -137,7 +137,7 @@ The `tabpage_format` string accepts the following option:
 ## Colors
 
 The `hlgroups` option is a table that accepts the following keys to allow
-setting highlight groups based on buffer state. Setting a value to `nil` will
+setting highlight groups based on buffer state. Leaving a value empty will
 cause the plugin to fall back to the next available group.
 
 | Key                | Condition                                                               |
