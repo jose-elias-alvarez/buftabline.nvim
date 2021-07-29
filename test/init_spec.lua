@@ -78,6 +78,12 @@ describe("buftabline", function()
 
             assert.equals(vim.o.showtabline, 0)
         end)
+
+        it("should set showtabline to 0 when auto_hide is set", function()
+            buftabline.setup({ auto_hide = true })
+
+            assert.equals(vim.o.showtabline, 0)
+        end)
     end)
 
     describe("tabline", function()

@@ -23,7 +23,7 @@ M.setup = function(opts)
         u.map({ prefix = "<Leader>", cmd = "buffer" })
     end
 
-    vim.o.showtabline = o.get().start_hidden and 0 or 2
+    vim.o.showtabline = (o.get().start_hidden or o.get().auto_hide) and 0 or 2
     vim.o.tabline = [[%!luaeval('require("buftabline").build()')]]
 end
 
