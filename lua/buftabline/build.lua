@@ -1,6 +1,5 @@
 local b = require("buftabline.buffers")
 local t = require("buftabline.tabpages")
-local u = require("buftabline.utils")
 local h = require("buftabline.highlights")
 local o = require("buftabline.options")
 
@@ -15,7 +14,7 @@ local make_separator = function(budget)
     return hl and h.add_hl(to_string, hl) or to_string
 end
 
-local build = function()
+return function()
     local budget = vim.o.columns
     local tabs = {}
     vim.list_extend(tabs, t.make_tabpage_tabs())
@@ -43,15 +42,4 @@ local build = function()
         end
     end
     return table.concat(labels)
-end
-
-return function()
-    local ok, result = xpcall(build, debug.traceback)
-    if ok then
-        return result
-    end
-
-    u.echo_warning("Something went wrong while building the bufferline!")
-    u.echo_warning("Please report the error and include the following trace: " .. result)
-    vim.o.tabline = ""
 end

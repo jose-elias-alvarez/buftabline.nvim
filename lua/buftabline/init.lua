@@ -1,9 +1,19 @@
 local o = require("buftabline.options")
 local u = require("buftabline.utils")
+local build = require("buftabline.build")
 
 local M = {}
 
-M.build = require("buftabline.build")
+M.build = function()
+    local ok, result = xpcall(build, debug.traceback)
+    if ok then
+        return result
+    end
+
+    u.echo_warning("Something went wrong!: " .. result)
+    vim.o.tabline = ""
+    u.clear_augroup()
+end
 
 M.map = u.map
 
