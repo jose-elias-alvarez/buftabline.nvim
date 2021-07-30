@@ -1,4 +1,3 @@
-local mock = require("luassert.mock")
 local stub = require("luassert.stub")
 
 local o = require("buftabline.options")
@@ -7,9 +6,8 @@ local h = require("buftabline.highlights")
 describe("Buftab", function()
     local Buftab = require("buftabline.buftab")
 
-    local mock_buf, api
+    local mock_buf
     before_each(function()
-        api = mock(vim.api, true)
         mock_buf = {
             bufnr = 5,
             name = "/mock/path/mock-file.lua",
@@ -366,21 +364,74 @@ describe("Buftab", function()
             end)
         end)
 
+        describe("replace_template", function()
+            local tab
+            before_each(function()
+                tab = Buftab:new(mock_buf)
+            end)
+
+            it("should do nothing if label does not contain option", function()
+                tab.label = "#{b}"
+
+                tab:replace_template("#{i}", "icon")
+
+                assert.equals(tab.label, "#{b}")
+            end)
+
+            it("should replace option with value", function()
+                tab.label = "#{i}"
+
+                tab:replace_template("#{i}", "icon")
+
+                assert.equals(tab.label, "icon")
+            end)
+
+            it("should offset icon_pos by label difference if start_pos is before icon_pos", function()
+                tab.label = "#{b}"
+                tab.icon_pos = 5
+
+                tab:replace_template("#{b}", "longname") -- 4 characters longer
+
+                assert.equals(tab.icon_pos, 9)
+            end)
+
+            it("should not offset icon_pos if start_pos is after icon_pos", function()
+                tab.label = "#{i} #{b}"
+                tab.icon_pos = 4
+
+                tab:replace_template("#{b}", "longname")
+
+                assert.equals(tab.icon_pos, 4)
+            end)
+        end)
+
         describe("generate", function()
             local tab
             before_each(function()
                 tab = Buftab:new(mock_buf, 1, false)
-                tab.name = "test"
                 tab.is_ambiguous = stub.new()
                 tab.can_insert = stub.new()
                 tab.truncate = stub.new()
                 tab.highlight = stub.new()
+                tab.replace_template = stub.new()
             end)
 
-            it("should replace placeholders with data", function()
+            it("should call tab:replace_template() with self args", function()
                 tab:generate(100, {})
 
-                assert.equals(tab.label, " 1: test ")
+                assert.stub(tab.replace_template).was_called(4)
+                assert.stub(tab.replace_template).was_called_with(tab, "#{n}", tab.index)
+                assert.stub(tab.replace_template).was_called_with(tab, "#{f}", tab.flags)
+                assert.stub(tab.replace_template).was_called_with(tab, "#{i}", "")
+                assert.stub(tab.replace_template).was_called_with(tab, "#{b}", "mock-file.lua")
+            end)
+
+            it("should call tab:replace_template() with icon if set", function()
+                tab.icon = "icon"
+
+                tab:generate(100, {})
+
+                assert.stub(tab.replace_template).was_called_with(tab, "#{i}", "icon")
             end)
 
             it("should call tab:highlight()", function()
@@ -389,21 +440,12 @@ describe("Buftab", function()
                 assert.stub(tab.highlight).was_called()
             end)
 
-            it("should add containing directory if is_ambiguous returns true", function()
+            it("should add containing directory to name if is_ambiguous returns true", function()
                 tab.is_ambiguous.returns(true)
 
                 tab:generate(100, {})
 
-                assert.equals(tab.label, " 1: path/test ")
-            end)
-
-            it("should replace icon placeholder with icon", function()
-                tab.icon = "icon"
-                tab.format = "#{i}"
-
-                tab:generate(100, {})
-
-                assert.equals(tab.label, "icon")
+                assert.stub(tab.replace_template).was_called_with(tab, "#{b}", "path/mock-file.lua")
             end)
 
             it("should call truncate if can_insert returns false", function()
@@ -418,7 +460,7 @@ describe("Buftab", function()
                 local adjusted, label, last = tab:generate(100, {})
 
                 assert.equals(adjusted, 100 - tab:get_width())
-                assert.equals(label, " 1: test ")
+                assert.equals(label, tab.label)
                 assert.equals(last, false)
             end)
         end)

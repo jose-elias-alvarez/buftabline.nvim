@@ -46,45 +46,6 @@ describe("build", function()
             )
         end)
 
-        it("should show icons", function()
-            o.set({ tab_format = " #{i} #{n}: #{b}#{f} " })
-
-            edit_mock_files(3)
-
-            assert.equals(
-                build_and_trim(),
-                "%#TabLineFill# %*%#DevIconLuaTabLineFill# %*%#TabLineFill#1: test1.lua %*%#TabLineFill# %*%#DevIconLuaTabLineFill# %*%#TabLineFill#2: test2.lua %*%#TabLineSel# %*%#DevIconLuaTabLineSel# %*%#TabLineSel#3: test3.lua %*"
-            )
-        end)
-
-        it("should handle large number of formatted tabs", function()
-            o.set({ tab_format = " #{i} #{n}: #{b}#{f} " })
-            local count = 500
-
-            edit_mock_files(count)
-
-            local expected = ""
-            for i = 1, count do
-                -- string.format hates this
-                if i < count then
-                    expected = expected
-                        .. "%#TabLineFill# %*%#DevIconLuaTabLineFill# %*%#TabLineFill#"
-                        .. i
-                        .. ": test"
-                        .. i
-                        .. ".lua %*"
-                else
-                    expected = expected
-                        .. "%#TabLineSel# %*%#DevIconLuaTabLineSel# %*%#TabLineSel#"
-                        .. i
-                        .. ": test"
-                        .. i
-                        .. ".lua %*"
-                end
-            end
-            assert.equals(build(), expected)
-        end)
-
         it("should skip no name buffer", function()
             vim.cmd("enew")
 
@@ -118,6 +79,32 @@ describe("build", function()
                 build_and_trim(),
                 "%#TabLineFill# 1: buftabline.nvim/test1.lua %*%#TabLineSel# 2: test/test1.lua %*"
             )
+        end)
+    end)
+
+    describe("icons", function()
+        it("should show colored icons at tab beginning", function()
+            o.set({ tab_format = " #{i} #{n}: #{b}#{f} " })
+
+            edit_mock_files(1)
+
+            assert.equals(build_and_trim(), "%#TabLineSel# %*%#DevIconLuaTabLineSel# %*%#TabLineSel#1: test1.lua %*")
+        end)
+
+        it("should show colored icons in middle of tab", function()
+            o.set({ tab_format = " #{n} #{i}: #{b}#{f} " })
+
+            edit_mock_files(1)
+
+            assert.equals(build_and_trim(), "%#TabLineSel# 1 %*%#DevIconLuaTabLineSel#: %*%#TabLineSel#test1.lua %*")
+        end)
+
+        it("should show colored icons at tab end", function()
+            o.set({ tab_format = " #{n}: #{b}#{f} #{i} " })
+
+            edit_mock_files(1)
+
+            assert.equals(build_and_trim(), "%#TabLineSel# 1: test1.lua %*%#DevIconLuaTabLineSel# %*%#TabLineSel#%*")
         end)
     end)
 

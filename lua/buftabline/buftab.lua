@@ -135,6 +135,19 @@ function Buftab:is_ambiguous(tabs)
     return false
 end
 
+function Buftab:replace_template(option, val)
+    local start_pos = self.label:find(option)
+    if not start_pos then
+        return
+    end
+
+    local len_before = #self.label
+    self.label = self.label:gsub(option, val)
+    if self.icon_pos and start_pos < self.icon_pos then
+        self.icon_pos = self.icon_pos + #self.label - len_before
+    end
+end
+
 function Buftab:generate(budget, tabs)
     local name = self.name
     if self:is_ambiguous(tabs) then
@@ -144,10 +157,10 @@ function Buftab:generate(budget, tabs)
     end
 
     self.label = self.format
-    self.label = self.label:gsub("#{n}", self.index)
-    self.label = self.label:gsub("#{f}", self.flags)
-    self.label = self.label:gsub("#{i}", self.icon or "")
-    self.label = self.label:gsub("#{b}", name)
+    self:replace_template("#{n}", self.index)
+    self:replace_template("#{f}", self.flags)
+    self:replace_template("#{i}", self.icon or "")
+    self:replace_template("#{b}", name)
 
     local adjusted = budget - self:get_width()
     if not self:can_insert(adjusted) then
