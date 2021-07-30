@@ -20,10 +20,11 @@ return function()
     vim.list_extend(tabs, t.make_tabpage_tabs())
     vim.list_extend(tabs, b.make_buftabs())
 
-    local labels = {}
+    local labels, insert_separator_at = {}, 0
     for _, tab in ipairs(tabs) do
         local remaining, label, last = tab:generate(budget, tabs)
         budget = remaining
+
         if tab.position == "right" or tabs[1].position == "left" then
             table.insert(labels, label)
         else
@@ -31,15 +32,17 @@ return function()
         end
 
         if last then
-            local separator = make_separator(budget)
-            if tabs[1].position == "right" then
-                table.insert(labels, tab.insert_at + 1, separator)
-            else
-                table.insert(labels, separator)
-            end
-
+            insert_separator_at = tab.insert_at
             break
         end
     end
+
+    local separator = make_separator(budget)
+    if tabs[1] and tabs[1].position == "right" then
+        table.insert(labels, insert_separator_at + 1, separator)
+    else
+        table.insert(labels, separator)
+    end
+
     return table.concat(labels)
 end
