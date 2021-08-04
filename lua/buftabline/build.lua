@@ -44,5 +44,9 @@ return function()
         table.insert(labels, separator)
     end
 
-    return table.concat(labels)
+    if o.get().auto_hide then
+        vim.o.showtabline = #tabs > 1 and 2 or 0
+    end
+
+    vim.o.tabline = table.concat(labels)
 end

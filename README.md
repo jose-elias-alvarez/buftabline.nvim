@@ -98,6 +98,7 @@ local options = {
     show_tabpages = true,
     tabpage_format = " #{n} ",
     tabpage_position = "right",
+    tabpage_buffers = false
 }
 ```
 
@@ -115,6 +116,7 @@ local options = {
 | `show_tabpages`    | Shows tabpages (`:h tabpages`) in your bufferline. Can be `true` (show if more than one tabpage), `always` (always show), and `false` (disable). If you don't use tabpages, there's no need to change this. |
 | `show_tabpages`    | Defines how the plugin formats tabpages (see [Format](#format) below for details).                                                                                                                          |
 | `tabpage_position` | Determines where the plugin shows tabpages. Can be `right` or `left`. Does nothing if you've set `show_tabpages` to `false`.                                                                                |
+| `tabpage_buffers`  | Associates buffers with tabpages, meaning the current tabpage only shows buffers opened in that tabpage.                                                                                                    |
 
 ## Format
 
@@ -174,10 +176,8 @@ Aside from these, I'm open to PRs.
 
 ## Tests
 
-I've covered most of the code with tests written with
-[plenary.nvim](https://github.com/nvim-lua/plenary.nvim)'s test harness. Running
-`make test` from the plugin's root directory will run the test suite and exit
-with a relevant exit code.
+Run `make test` from the plugin's root directory. Depends on
+[plenary.nvim](https://github.com/nvim-lua/plenary.nvim).
 
 ## Inspiration
 

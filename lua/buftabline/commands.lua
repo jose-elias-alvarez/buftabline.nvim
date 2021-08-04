@@ -1,4 +1,5 @@
 local b = require("buftabline.buffers")
+local u = require("buftabline.utils")
 local o = require("buftabline.options")
 
 local M = {}
@@ -49,9 +50,20 @@ M.toggle_tabline = function()
     vim.o.showtabline = vim.o.showtabline > 0 and 0 or 2
 end
 
-M.auto_hide = function()
+M.on_buffer_add = b.on_buffer_add
+M.on_buffer_delete = b.on_buffer_delete
+M.on_tab_closed = b.on_tab_closed
+
+M.build = function()
     vim.schedule(function()
-        vim.o.showtabline = #b.getbufinfo() <= 1 and 0 or 2
+        local _, err = xpcall(require("buftabline.build"), debug.traceback)
+        if not err then
+            return
+        end
+
+        u.echo_warning("Something went wrong!: " .. err)
+        vim.o.tabline = ""
+        u.clear_augroup()
     end)
 end
 

@@ -25,6 +25,7 @@ local defaults = {
     show_tabpages = true,
     tabpage_format = " #{n} ",
     tabpage_position = "right",
+    tabpage_buffers = false,
 }
 
 local options = vim.deepcopy(defaults)
