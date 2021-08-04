@@ -1,4 +1,3 @@
-local buftabline = require("buftabline")
 local o = require("buftabline.options")
 
 local input = function(keys)
@@ -31,14 +30,14 @@ local assert_current = function(name)
 end
 
 describe("buftabline", function()
+    require("buftabline").setup()
+
     after_each(function()
         vim.o.columns = 80
         vim.o.showtabline = 2
         close_all()
         o.reset()
     end)
-
-    buftabline.setup()
 
     describe("buftabs", function()
         it("should show open buffers and highlight current", function()
