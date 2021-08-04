@@ -53,6 +53,7 @@ end
 M.on_buffer_add = b.on_buffer_add
 M.on_buffer_delete = b.on_buffer_delete
 M.on_tab_closed = b.on_tab_closed
+M.on_vim_enter = b.on_vim_enter
 
 M.build = function()
     vim.schedule(function()

@@ -68,8 +68,8 @@ M.make_buftabs = function()
 end
 
 -- autocommands
-M.on_buffer_add = function()
-    local bufnr = tonumber(vim.fn.expand("<abuf>"))
+M.on_buffer_add = function(bufnr)
+    bufnr = bufnr or tonumber(vim.fn.expand("<abuf>"))
     if not should_handle(bufnr) then
         return
     end
@@ -104,6 +104,12 @@ M.on_tab_closed = function()
                 end
             end
         end
+    end
+end
+
+M.on_vim_enter = function()
+    for _, bufnr in ipairs(api.nvim_list_bufs()) do
+        M.on_buffer_add(bufnr)
     end
 end
 
