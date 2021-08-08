@@ -1,6 +1,7 @@
 local b = require("buftabline.buffers")
 local u = require("buftabline.utils")
 local o = require("buftabline.options")
+local h = require("buftabline.highlights")
 
 local M = {}
 
@@ -66,6 +67,11 @@ M.build = function()
         vim.o.tabline = ""
         u.clear_augroup()
     end)
+end
+
+M.reset_icon_colors = function()
+    h.reset()
+    M.build()
 end
 
 return M

@@ -11,15 +11,16 @@ M.define_command = function(name, fn)
     vim.cmd(format("command! %s lua require'buftabline.commands'.%s", name, fn))
 end
 
-M.define_autocmd = function(event, fn)
+M.define_autocmd = function(event, fn, cond)
     api.nvim_exec(
         format(
             [[
         augroup Buftabline
-            autocmd %s * lua require'buftabline.commands'.%s
+            autocmd %s %s lua require'buftabline.commands'.%s
         augroup END
             ]],
             event,
+            cond or "*",
             fn
         ),
         false

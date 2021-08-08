@@ -24,6 +24,11 @@ M.setup = function(opts)
     u.define_autocmd("VimEnter", "on_vim_enter()")
     u.define_autocmd("BufAdd,BufEnter,BufDelete,BufModifiedSet,TabEnter,TabClosed,WinEnter", "build()")
 
+    if o.get().icon_colors then
+        u.define_autocmd("ColorScheme", "reset_icon_colors()")
+        u.define_autocmd("OptionSet", "reset_icon_colors()", "background")
+    end
+
     vim.o.showtabline = (o.get().start_hidden or o.get().auto_hide) and 0 or 2
 end
 
