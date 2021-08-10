@@ -15,14 +15,8 @@ local close_all = function()
     vim.cmd("bufdo! bwipeout!")
 end
 
-local wait_for_scheduler = function()
-    vim.wait(0)
-end
-
 local assert_tabline = function(expected)
-    wait_for_scheduler()
-
-    assert.equals(vim.trim(vim.o.tabline), expected)
+    assert.equals(expected, vim.trim(buftabline()))
 end
 
 local assert_current = function(name)
@@ -30,7 +24,7 @@ local assert_current = function(name)
 end
 
 describe("buftabline", function()
-    require("buftabline").setup()
+    require("buftabline").__load()
 
     after_each(function()
         vim.o.columns = 80
@@ -235,26 +229,21 @@ describe("buftabline", function()
         it("should hide tabline if only one tab is open", function()
             edit_mock_files(1)
 
-            wait_for_scheduler()
-
-            assert.equals(vim.o.showtabline, 0)
+            assert.equals(0, vim.o.showtabline)
         end)
 
         it("should show tabline if more than one tab is open", function()
             edit_mock_files(2)
 
-            wait_for_scheduler()
-
-            assert.equals(vim.o.showtabline, 2)
+            assert.equals(2, vim.o.showtabline)
         end)
 
         it("should hide on buffer close if only one tab is left", function()
             edit_mock_files(2)
 
             vim.cmd("bdelete")
-            wait_for_scheduler()
 
-            assert.equals(vim.o.showtabline, 0)
+            assert.equals(0, vim.o.showtabline)
         end)
     end)
 
