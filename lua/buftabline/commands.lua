@@ -51,27 +51,29 @@ M.toggle_tabline = function()
     vim.o.showtabline = vim.o.showtabline > 0 and 0 or 2
 end
 
+M.check_auto_hide = vim.schedule_wrap(function()
+    if not o.get().auto_hide then
+        return
+    end
+
+    local bufs = b.getbufinfo()
+    local num_tabs = #bufs
+    local tabnrs = vim.api.nvim_list_tabpages()
+    if #tabnrs > 1 or o.get().show_tabpages == "always" then
+        num_tabs = num_tabs + #tabnrs
+    end
+
+    vim.o.showtabline = num_tabs > 1 and 2 or 0
+end)
+
 M.on_buffer_add = b.on_buffer_add
 M.on_buffer_delete = b.on_buffer_delete
 M.on_tab_closed = b.on_tab_closed
 M.on_vim_enter = b.on_vim_enter
 
-M.build = function()
-    vim.schedule(function()
-        local _, err = xpcall(require("buftabline.build"), debug.traceback)
-        if not err then
-            return
-        end
-
-        u.echo_warning("Something went wrong!: " .. err)
-        vim.o.tabline = ""
-        u.clear_augroup()
-    end)
-end
-
 M.reset_icon_colors = function()
     h.reset()
-    M.build()
+    vim.cmd("redrawtabline")
 end
 
 return M
