@@ -22,7 +22,7 @@ M.setup = function(opts)
     u.define_autocmd("BufDelete", "on_buffer_delete()")
     u.define_autocmd("TabClosed", "on_tab_closed()")
     u.define_autocmd("VimEnter", "on_vim_enter()")
-    u.define_autocmd("BufAdd,BufEnter,BufDelete,BufModifiedSet,TabEnter,TabClosed,WinEnter", "build()")
+    u.define_autocmd("BufAdd,BufEnter,BufDelete,BufModifiedSet,BufWritePost,TabEnter,TabClosed,WinEnter", "build()")
 
     if o.get().icon_colors then
         u.define_autocmd("ColorScheme", "reset_icon_colors()")
