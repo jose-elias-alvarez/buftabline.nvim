@@ -56,18 +56,16 @@ M.on_buffer_delete = b.on_buffer_delete
 M.on_tab_closed = b.on_tab_closed
 M.on_vim_enter = b.on_vim_enter
 
-M.build = function()
-    vim.schedule(function()
-        local _, err = xpcall(require("buftabline.build"), debug.traceback)
-        if not err then
-            return
-        end
+M.build = vim.schedule_wrap(function()
+    local _, err = xpcall(require("buftabline.build"), debug.traceback)
+    if not err then
+        return
+    end
 
-        u.echo_warning("Something went wrong!: " .. err)
-        vim.o.tabline = ""
-        u.clear_augroup()
-    end)
-end
+    u.echo_warning("Something went wrong!: " .. err)
+    vim.o.tabline = ""
+    u.clear_augroup()
+end)
 
 M.reset_icon_colors = function()
     h.reset()
