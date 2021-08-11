@@ -51,7 +51,7 @@ M.toggle_tabline = function()
     vim.o.showtabline = vim.o.showtabline > 0 and 0 or 2
 end
 
-M.check_auto_hide = function()
+M.check_auto_hide = vim.schedule_wrap(function()
     if not o.get().auto_hide then
         return
     end
@@ -64,7 +64,7 @@ M.check_auto_hide = function()
     end
 
     vim.o.showtabline = num_tabs > 1 and 2 or 0
-end
+end)
 
 M.on_buffer_add = b.on_buffer_add
 M.on_buffer_delete = b.on_buffer_delete
@@ -73,7 +73,7 @@ M.on_vim_enter = b.on_vim_enter
 
 M.reset_icon_colors = function()
     h.reset()
-    vim.cmd 'redrawtabline'
+    vim.cmd("redrawtabline")
 end
 
 return M
