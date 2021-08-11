@@ -1,3 +1,4 @@
+local build = require("buftabline.build")
 local o = require("buftabline.options")
 
 local input = function(keys)
@@ -16,7 +17,7 @@ local close_all = function()
 end
 
 local assert_tabline = function(expected)
-    assert.equals(expected, vim.trim(buftabline()))
+    assert.equals(expected, vim.trim(build()))
 end
 
 local assert_current = function(name)
@@ -69,77 +70,6 @@ describe("buftabline", function()
             vim.cmd("e " .. vim.fn.getcwd() .. "/test/test1.lua")
 
             assert_tabline("%#TabLineFill# 1: buftabline.nvim/test1.lua %*%#TabLineSel# 2: test/test1.lua %*")
-        end)
-    end)
-
-    describe("events", function()
-        before_each(function()
-            vim.o.columns = 32
-            edit_mock_files(1)
-        end)
-
-        it("should update on BufAdd", function()
-            vim.cmd("e newfile")
-
-            assert_tabline("%#TabLineFill# 1: test1.lua %*%#TabLineSel# 2: newfile %*")
-        end)
-
-        it("should update on BufEnter", function()
-            vim.cmd("e newfile")
-
-            vim.cmd("bprev")
-
-            assert_tabline("%#TabLineSel# 1: test1.lua %*%#TabLineFill# 2: newfile %*")
-        end)
-
-        it("should update on BufDelete", function()
-            vim.cmd("bdelete")
-
-            assert_tabline("")
-        end)
-
-        it("should update on BufModifiedSet", function()
-            vim.cmd("normal Atest")
-
-            assert_tabline("%#TabLineSel# 1: test1.lua [+] %*")
-        end)
-
-        it("should update on TabEnter (new)", function()
-            vim.cmd("tabnew")
-
-            assert_tabline("%#TabLineFill# 1: test1.lua %*            %#TabLineFill# 1 %*%#TabLineSel# 2 %*")
-        end)
-
-        it("should update on TabEnter (change)", function()
-            vim.cmd("tabnew")
-
-            vim.cmd("tabprev")
-
-            assert_tabline("%#TabLineSel# 1: test1.lua %*            %#TabLineSel# 1 %*%#TabLineFill# 2 %*")
-        end)
-
-        it("should update on TabClose", function()
-            vim.cmd("tabnew")
-
-            vim.cmd("tabclose")
-
-            assert_tabline("%#TabLineSel# 1: test1.lua %*")
-        end)
-
-        it("should update on WinEnter (new)", function()
-            vim.cmd("split")
-            vim.cmd("e newfile")
-
-            assert_tabline("%#TabLineFill# 1: test1.lua %*%#TabLineSel# 2: newfile %*")
-        end)
-
-        it("should update on WinEnter (change)", function()
-            vim.cmd("split")
-            vim.cmd("e newfile")
-
-            vim.cmd("wincmd p")
-
-            assert_tabline("%#TabLineSel# 1: test1.lua %*%#TabLineFill# 2: newfile %*")
         end)
     end)
 
@@ -229,11 +159,15 @@ describe("buftabline", function()
         it("should hide tabline if only one tab is open", function()
             edit_mock_files(1)
 
+            vim.wait(0)
+
             assert.equals(0, vim.o.showtabline)
         end)
 
         it("should show tabline if more than one tab is open", function()
             edit_mock_files(2)
+
+            vim.wait(0)
 
             assert.equals(2, vim.o.showtabline)
         end)
@@ -242,6 +176,7 @@ describe("buftabline", function()
             edit_mock_files(2)
 
             vim.cmd("bdelete")
+            vim.wait(0)
 
             assert.equals(0, vim.o.showtabline)
         end)
