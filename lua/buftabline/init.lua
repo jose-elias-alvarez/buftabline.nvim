@@ -41,11 +41,11 @@ M.setup = function(opts)
     if vim.v.vim_did_enter == 1 then
         M.__load()
     else
-        vim.cmd [[
+        vim.cmd([[
             augroup BuftablineLoad
                 autocmd VimEnter * ++once lua require('buftabline').__load()
             augroup END
-        ]]
+        ]])
     end
 end
 
