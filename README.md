@@ -45,14 +45,13 @@ which will target a buffer in the tabline with a command:
 require("buftabline").buftarget(1, "rightbelow sb")
 ```
 
-Buftabline includes a built-in `buftarget` command, `go_to_buffer(number)`,
-which does what you'd imagine. By default, the plugin maps `<Leader>0-9` to the
-corresponding `go_to_buffer` command (`0` gets converted to `10`), but you can
-disable this by setting `go_to_maps` to `false` (see [Options](#options)).
+By default, the plugin maps `<Leader>0-9` to go to the corresponding buffer (`0`
+gets converted to `10`), but you can disable this by setting `go_to_maps` to
+`false` (see [Options](#options)).
 
-To simplify the creation of custom commands, buftabline also exposes a `map`
-method. The following example will map `<Leader>c1` through `Leader<c9>` to the
-corresponding `bdelete` command:
+To simplify the creation of more custom commands, buftabline also exposes a
+`map` method. The following example will map `<Leader>c1` through `Leader<c9>`
+to the corresponding `bdelete` command:
 
 ```lua
 require("buftabline").map({ prefix = "<Leader>c", cmd = "bdelete" })
@@ -110,7 +109,7 @@ local options = {
 | `start_hidden`     | Hides the tabline when Neovim starts.                                                                                                                                                                       |
 | `auto_hide`        | Shows the tabline when you have more than one buffer open and hides it when you don't. Not compatible with `start_hidden`.                                                                                  |
 | `disable_commands` | Stops the plugin from defining commands.                                                                                                                                                                    |
-| `go_to_maps`       | Maps `<Leader>0-9` to the corresponding `go_to_buffer` command.                                                                                                                                             |
+| `go_to_maps`       | Maps `<Leader>0-9` to go to the corresponding buffer.                                                                                                                                                       |
 | `flags`            | Sets the flags used to mark a buffer's status.                                                                                                                                                              |
 | `hlgroups`         | Sets highlight groups (see [Colors](#colors) below for details).                                                                                                                                            |
 | `show_tabpages`    | Shows tabpages (`:h tabpages`) in your bufferline. Can be `true` (show if more than one tabpage), `always` (always show), and `false` (disable). If you don't use tabpages, there's no need to change this. |
