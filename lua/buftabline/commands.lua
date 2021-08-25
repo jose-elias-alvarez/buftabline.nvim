@@ -54,9 +54,9 @@ M.check_auto_hide = vim.schedule_wrap(function()
     vim.o.showtabline = #b.getbufinfo() > 1 and 2 or 0
 end)
 
-M.reset_icon_colors = function()
+M.reset_icon_colors = vim.schedule_wrap(function()
     h.reset()
     vim.cmd("redrawtabline")
-end
+end)
 
 return M
