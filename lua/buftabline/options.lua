@@ -19,13 +19,7 @@ local defaults = {
         modified_current = nil,
         modified_normal = nil,
         modified_active = nil,
-        tabpage_current = nil,
-        tabpage_normal = nil,
     },
-    show_tabpages = true,
-    tabpage_format = " #{n} ",
-    tabpage_position = "right",
-    tabpage_buffers = false,
 }
 
 local options = vim.deepcopy(defaults)

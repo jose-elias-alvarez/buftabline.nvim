@@ -34,8 +34,7 @@ use {
 ## Features
 
 Buftabline shows your open buffers in your tabline with (optional) filetype
-icons and applies highlighting to each tab based its buffer's state. If you
-want, it'll also show your tabpages (`:help tabpages`). That's
+icons and applies highlighting to each tab based its buffer's state. That's
 pretty much it.
 
 For convenience, the plugin exposes a function, `buftarget(number, command)`
@@ -91,31 +90,21 @@ local options = {
         modified_current = nil,
         modified_normal = nil,
         modified_active = nil,
-        tabpage_current = nil,
-        tabpage_normal = nil
     },
-    show_tabpages = true,
-    tabpage_format = " #{n} ",
-    tabpage_position = "right",
-    tabpage_buffers = false
 }
 ```
 
-| Option             | Description                                                                                                                                                                                                 |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tab_format`       | Defines how the plugin formats buffer tabs (see [Format](#format) below for details).                                                                                                                       |
-| `buffer_id_index`  | Uses buffer numbers (the ones shown in `:ls`) instead of sequential indexes.                                                                                                                                |
-| `icon_colors`      | Shows icon colors in your tabline. Can be `true` (always show), `current` (show for current tab), and `normal` (show for background tabs).                                                                  |
-| `start_hidden`     | Hides the tabline when Neovim starts.                                                                                                                                                                       |
-| `auto_hide`        | Shows the tabline when you have more than one buffer open and hides it when you don't. Not compatible with `start_hidden`.                                                                                  |
-| `disable_commands` | Stops the plugin from defining commands.                                                                                                                                                                    |
-| `go_to_maps`       | Maps `<Leader>0-9` to go to the corresponding buffer.                                                                                                                                                       |
-| `flags`            | Sets the flags used to mark a buffer's status.                                                                                                                                                              |
-| `hlgroups`         | Sets highlight groups (see [Colors](#colors) below for details).                                                                                                                                            |
-| `show_tabpages`    | Shows tabpages (`:h tabpages`) in your bufferline. Can be `true` (show if more than one tabpage), `always` (always show), and `false` (disable). If you don't use tabpages, there's no need to change this. |
-| `show_tabpages`    | Defines how the plugin formats tabpages (see [Format](#format) below for details).                                                                                                                          |
-| `tabpage_position` | Determines where the plugin shows tabpages. Can be `right` or `left`. Does nothing if you've set `show_tabpages` to `false`.                                                                                |
-| `tabpage_buffers`  | Associates buffers with tabpages, meaning the current tabpage only shows buffers opened in that tabpage.                                                                                                    |
+| Option             | Description                                                                                                                                |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `tab_format`       | Defines how the plugin formats buffer tabs (see [Format](#format) below for details).                                                      |
+| `buffer_id_index`  | Uses buffer numbers (the ones shown in `:ls`) instead of sequential indexes.                                                               |
+| `icon_colors`      | Shows icon colors in your tabline. Can be `true` (always show), `current` (show for current tab), and `normal` (show for background tabs). |
+| `start_hidden`     | Hides the tabline when Neovim starts.                                                                                                      |
+| `auto_hide`        | Shows the tabline when you have more than one buffer open and hides it when you don't. Not compatible with `start_hidden`.                 |
+| `disable_commands` | Stops the plugin from defining commands.                                                                                                   |
+| `go_to_maps`       | Maps `<Leader>0-9` to go to the corresponding buffer.                                                                                      |
+| `flags`            | Sets the flags used to mark a buffer's status.                                                                                             |
+| `hlgroups`         | Sets highlight groups (see [Colors](#colors) below for details).                                                                           |
 
 ## Format
 
@@ -151,8 +140,6 @@ cause the plugin to fall back to the next available group.
 | `modified_current` | Same as `current`, but the buffer is modified.                                                          |
 | `modified_normal`  | Same as `normal`, but the buffer is modified.                                                           |
 | `modified_active`  | Same as `active`, but the buffer is modified.                                                           |
-| `tabpage_current`  | The current tabpage. Falls back to `current` if not defined.                                            |
-| `tabpage_normal`   | Tabpages other than the current. Falls back to `normal` if not defined.                                 |
 
 ## FAQ
 

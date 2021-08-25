@@ -76,7 +76,6 @@ function Buftab:new(buf, index, last)
     t.buf = buf
     t.name = vim.fn.fnamemodify(buf.name, ":t")
     t.format = o.get().tab_format
-    t.position = "left"
 
     setmetatable(t, self)
 

@@ -1,3 +1,5 @@
+local build = require("buftabline.build")
+local u = require("buftabline.utils")
 local o = require("buftabline.options")
 
 local input = function(keys)
@@ -11,18 +13,11 @@ local edit_mock_files = function(count)
 end
 
 local close_all = function()
-    vim.cmd("silent tabonly")
     vim.cmd("bufdo! bwipeout!")
 end
 
-local wait_for_scheduler = function()
-    vim.wait(0)
-end
-
 local assert_tabline = function(expected)
-    wait_for_scheduler()
-
-    assert.equals(vim.trim(vim.o.tabline), expected)
+    assert.equals(expected, vim.trim(build()))
 end
 
 local assert_current = function(name)
@@ -30,12 +25,17 @@ local assert_current = function(name)
 end
 
 describe("buftabline", function()
-    require("buftabline").setup()
+    before_each(function()
+        require("buftabline").setup()
+    end)
 
     after_each(function()
+        close_all()
+
         vim.o.columns = 80
         vim.o.showtabline = 2
-        close_all()
+
+        u.clear_augroup()
         o.reset()
     end)
 
@@ -75,77 +75,6 @@ describe("buftabline", function()
             vim.cmd("e " .. vim.fn.getcwd() .. "/test/test1.lua")
 
             assert_tabline("%#TabLineFill# 1: buftabline.nvim/test1.lua %*%#TabLineSel# 2: test/test1.lua %*")
-        end)
-    end)
-
-    describe("events", function()
-        before_each(function()
-            vim.o.columns = 32
-            edit_mock_files(1)
-        end)
-
-        it("should update on BufAdd", function()
-            vim.cmd("e newfile")
-
-            assert_tabline("%#TabLineFill# 1: test1.lua %*%#TabLineSel# 2: newfile %*")
-        end)
-
-        it("should update on BufEnter", function()
-            vim.cmd("e newfile")
-
-            vim.cmd("bprev")
-
-            assert_tabline("%#TabLineSel# 1: test1.lua %*%#TabLineFill# 2: newfile %*")
-        end)
-
-        it("should update on BufDelete", function()
-            vim.cmd("bdelete")
-
-            assert_tabline("")
-        end)
-
-        it("should update on BufModifiedSet", function()
-            vim.cmd("normal Atest")
-
-            assert_tabline("%#TabLineSel# 1: test1.lua [+] %*")
-        end)
-
-        it("should update on TabEnter (new)", function()
-            vim.cmd("tabnew")
-
-            assert_tabline("%#TabLineFill# 1: test1.lua %*            %#TabLineFill# 1 %*%#TabLineSel# 2 %*")
-        end)
-
-        it("should update on TabEnter (change)", function()
-            vim.cmd("tabnew")
-
-            vim.cmd("tabprev")
-
-            assert_tabline("%#TabLineSel# 1: test1.lua %*            %#TabLineSel# 1 %*%#TabLineFill# 2 %*")
-        end)
-
-        it("should update on TabClose", function()
-            vim.cmd("tabnew")
-
-            vim.cmd("tabclose")
-
-            assert_tabline("%#TabLineSel# 1: test1.lua %*")
-        end)
-
-        it("should update on WinEnter (new)", function()
-            vim.cmd("split")
-            vim.cmd("e newfile")
-
-            assert_tabline("%#TabLineFill# 1: test1.lua %*%#TabLineSel# 2: newfile %*")
-        end)
-
-        it("should update on WinEnter (change)", function()
-            vim.cmd("split")
-            vim.cmd("e newfile")
-
-            vim.cmd("wincmd p")
-
-            assert_tabline("%#TabLineSel# 1: test1.lua %*%#TabLineFill# 2: newfile %*")
         end)
     end)
 
@@ -194,67 +123,43 @@ describe("buftabline", function()
             assert_tabline("%#MockHl# 1: test1.lua [+] %*%#TabLineSel# 2: newfile %*")
         end)
 
-        it("should apply tabpage_current highlight", function()
-            o.set({ hlgroups = { tabpage_current = "MockHl" } })
-            edit_mock_files(1)
-
-            vim.cmd("tabnew")
-
-            assert_tabline("%#TabLineFill# 1: test1.lua %*    %#TabLineFill# 1 %*%#MockHl# 2 %*")
-        end)
-
-        it("should apply tabpage_normal highlight", function()
-            o.set({ hlgroups = { tabpage_normal = "MockHl" } })
-            edit_mock_files(1)
-
-            vim.cmd("tabnew")
-
-            assert_tabline("%#TabLineFill# 1: test1.lua %*    %#MockHl# 1 %*%#TabLineSel# 2 %*")
-        end)
-
         it("should apply space highlight", function()
             o.set({ hlgroups = { spacing = "MockHl" } })
             edit_mock_files(1)
 
             assert_tabline("%#TabLineSel# 1: test1.lua %*%#MockHl#          %*")
         end)
-
-        it("should apply space highlight between buftabs and tabpage tabs", function()
-            o.set({ hlgroups = { spacing = "MockHl" }, show_tabpages = "always" })
-            edit_mock_files(1)
-
-            assert_tabline("%#TabLineSel# 1: test1.lua %*%#MockHl#       %*%#TabLineSel# 1 %*")
-        end)
     end)
 
     describe("auto_hide", function()
         before_each(function()
             o.set({ auto_hide = true })
+            require("buftabline").setup()
         end)
 
         it("should hide tabline if only one tab is open", function()
             edit_mock_files(1)
 
-            wait_for_scheduler()
+            vim.wait(0)
 
-            assert.equals(vim.o.showtabline, 0)
+            assert.equals(0, vim.o.showtabline)
         end)
 
         it("should show tabline if more than one tab is open", function()
             edit_mock_files(2)
 
-            wait_for_scheduler()
+            vim.wait(0)
 
-            assert.equals(vim.o.showtabline, 2)
+            assert.equals(2, vim.o.showtabline)
         end)
 
         it("should hide on buffer close if only one tab is left", function()
             edit_mock_files(2)
 
             vim.cmd("bdelete")
-            wait_for_scheduler()
+            vim.wait(0)
 
-            assert.equals(vim.o.showtabline, 0)
+            assert.equals(0, vim.o.showtabline)
         end)
     end)
 
@@ -315,43 +220,6 @@ describe("buftabline", function()
             end)
         end)
     end
-
-    describe("tabpages", function()
-        before_each(function()
-            vim.opt.columns = 24
-            edit_mock_files(1)
-        end)
-
-        it("should not show tabpages if only one tab is open and show_tabpages is set to true", function()
-            assert_tabline("%#TabLineSel# 1: test1.lua %*")
-        end)
-
-        it("should not show tabpages regardless of number if show_tabpages is set to false", function()
-            o.set({ show_tabpages = false })
-            vim.cmd("tabnew")
-
-            assert_tabline("%#TabLineFill# 1: test1.lua %*")
-        end)
-
-        it("should show tabpages if more than one tab is open and show_tabpages is set to true", function()
-            vim.cmd("tabnew")
-
-            assert_tabline("%#TabLineFill# 1: test1.lua %*    %#TabLineFill# 1 %*%#TabLineSel# 2 %*")
-        end)
-
-        it("should show tabpages if only one tab is open and show_tabpages is set to 'always'", function()
-            o.set({ show_tabpages = "always" })
-
-            assert_tabline("%#TabLineSel# 1: test1.lua %*       %#TabLineSel# 1 %*")
-        end)
-
-        it("should show tabpages on left if tabpage_position is set to 'left'", function()
-            o.set({ tabpage_position = "left" })
-            vim.cmd("tabnew")
-
-            assert_tabline("%#TabLineFill# 1 %*%#TabLineSel# 2 %*%#TabLineFill# 1: test1.lua %*")
-        end)
-    end)
 
     describe("commands", function()
         it("should define commands", function()
@@ -457,59 +325,6 @@ describe("buftabline", function()
 
                 assert_current("test1.lua")
             end)
-        end)
-    end)
-
-    describe("tabpage_buffers", function()
-        before_each(function()
-            o.set({ tabpage_buffers = true })
-            vim.opt.columns = 24
-        end)
-
-        it("should not show file that belongs to other tab", function()
-            edit_mock_files(1)
-
-            vim.cmd("tabnew")
-
-            assert_tabline("%#TabLineFill# 1 %*%#TabLineSel# 2 %*")
-        end)
-
-        it("should add file to current tab", function()
-            edit_mock_files(1)
-
-            vim.cmd("tabnew")
-            vim.cmd("e new-tab-file.lua")
-
-            assert_tabline("%#TabLineSel# 1: new-tab-file.lua %*%#TabLineFill# 1 %*%#TabLineSel# 2 %*")
-        end)
-
-        it("should delete buffer on tab close if only open in one tab", function()
-            vim.cmd("tabnew")
-            edit_mock_files(1)
-
-            vim.cmd("tabclose")
-
-            assert_tabline("")
-        end)
-
-        it("should not delete buffer on tab close if open in more than one tab", function()
-            edit_mock_files(1)
-            vim.cmd("tabnew")
-            edit_mock_files(1)
-
-            vim.cmd("tabclose")
-
-            assert_tabline("%#TabLineSel# 1: test1.lua %*")
-        end)
-
-        it("should move modified buffer to previous tab", function()
-            vim.cmd("tabnew")
-            edit_mock_files(1)
-
-            vim.cmd("normal Atest")
-            vim.cmd("tabclose")
-
-            assert_tabline("%#TabLineFill# 1: test1.lua [+] %*")
         end)
     end)
 end)
