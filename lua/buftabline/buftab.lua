@@ -57,11 +57,13 @@ function Buftab:generate_icon()
         return
     end
 
-    local icon, icon_hl = require("nvim-web-devicons").get_icon(
-        vim.fn.fnamemodify(self.buf.name, ":t"),
-        vim.fn.fnamemodify(self.buf.name, ":e"),
-        { default = true }
-    )
+    local fname = vim.fn.fnamemodify(self.buf.name, ":t")
+    local ext = vim.fn.fnamemodify(self.buf.name, ":e")
+    if ext == "" then
+      ext = vim.api.nvim_buf_get_option(self.buf.bufnr, "filetype")
+    end
+
+    local icon, icon_hl = require("nvim-web-devicons").get_icon(fname, ext, { default = true })
     self.icon = icon
     self.icon_pos = icon_pos
     self.icon_hl = self:has_icon_colors() and h.merge_hl(icon_hl, self.hl) or self.hl
