@@ -111,7 +111,7 @@ local options = {
 | `flags`            | Sets the flags used to mark a buffer's status.                                                                                                                                                              |
 | `hlgroups`         | Sets highlight groups (see [Colors](#colors) below for details).                                                                                                                                            |
 | `show_tabpages`    | Shows tabpages (`:h tabpages`) in your bufferline. Can be `true` (show if more than one tabpage), `always` (always show), and `false` (disable). If you don't use tabpages, there's no need to change this. |
-| `show_tabpages`    | Defines how the plugin formats tabpages (see [Format](#format) below for details).                                                                                                                          |
+| `tabpage_format`   | Defines how the plugin formats tabpages (see [Format](#format) below for details).                                                                                                                          |
 | `tabpage_position` | Determines where the plugin shows tabpages. Can be `right` or `left`. Does nothing if you've set `show_tabpages` to `false`.                                                                                |
 
 ## Format
