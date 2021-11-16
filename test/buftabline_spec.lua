@@ -82,13 +82,22 @@ describe("buftabline", function()
     end)
 
     describe("tabpage tabs", function()
-        it("should show open tabpage tabs", function()
+        it("should show open tabpage tabs if more than one tab is open", function()
             edit_mock_files(1)
 
             vim.cmd("tabnew")
 
             assert_tabline(
                 "%#TabLineFill# 1: test1.lua %*                                                            %#TabLineFill# 1 %*%#TabLineSel# 2 %*"
+            )
+        end)
+
+        it("should always show open tabpage tabs if show_tabpages is set to always", function()
+            o.set({ show_tabpages = "always" })
+            edit_mock_files(1)
+
+            assert_tabline(
+                "%#TabLineSel# 1: test1.lua %*                                                               %#TabLineSel# 1 %*"
             )
         end)
 
