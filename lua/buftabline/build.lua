@@ -1,4 +1,5 @@
 local b = require("buftabline.buffers")
+local t = require("buftabline.tabpages")
 local h = require("buftabline.highlights")
 local o = require("buftabline.options")
 
@@ -15,19 +16,33 @@ end
 
 return function()
     local budget = vim.o.columns
-    local tabs = b.make_buftabs()
-    local labels = {}
+    local tabs = {}
+    vim.list_extend(tabs, t.make_tabpage_tabs())
+    vim.list_extend(tabs, b.make_buftabs())
+
+    local labels, insert_separator_at = {}, 0
     for _, tab in ipairs(tabs) do
         local remaining, label, last = tab:generate(budget, tabs)
         budget = remaining
 
-        table.insert(labels, tab.insert_at, label)
+        if tab.position == "right" or tabs[1].position == "left" then
+            table.insert(labels, label)
+        else
+            table.insert(labels, tab.insert_at, label)
+        end
+
         if last then
+            insert_separator_at = tab.insert_at
             break
         end
     end
 
-    table.insert(labels, make_separator(budget))
+    local separator = make_separator(budget)
+    if tabs[1] and tabs[1].position == "right" then
+        table.insert(labels, insert_separator_at + 1, separator)
+    else
+        table.insert(labels, separator)
+    end
 
     return table.concat(labels)
 end

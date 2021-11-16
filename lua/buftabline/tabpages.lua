@@ -5,7 +5,7 @@ local api = vim.api
 
 local M = {}
 
-M.make_tabpage_tabs = function()
+M.tabinfo = function()
     if not o.get().show_tabpages then
         return {}
     end
@@ -15,9 +15,13 @@ M.make_tabpage_tabs = function()
         return {}
     end
 
+    return tabnrs
+end
+
+M.make_tabpage_tabs = function()
     local current_tabnr = api.nvim_get_current_tabpage()
     local tabpage_tabs = {}
-    for i, tabnr in ipairs(tabnrs) do
+    for i, tabnr in ipairs(M.tabinfo()) do
         table.insert(
             tabpage_tabs,
             Tabpage:new({

@@ -60,7 +60,7 @@ function Buftab:generate_icon()
     local fname = vim.fn.fnamemodify(self.buf.name, ":t")
     local ext = vim.fn.fnamemodify(self.buf.name, ":e")
     if ext == "" then
-      ext = vim.api.nvim_buf_get_option(self.buf.bufnr, "filetype")
+        ext = vim.api.nvim_buf_get_option(self.buf.bufnr, "filetype")
     end
 
     local icon, icon_hl = require("nvim-web-devicons").get_icon(fname, ext, { default = true })
@@ -78,6 +78,7 @@ function Buftab:new(buf, index, last)
     t.buf = buf
     t.name = vim.fn.fnamemodify(buf.name, ":t")
     t.format = o.get().tab_format
+    t.position = "left"
 
     setmetatable(t, self)
 

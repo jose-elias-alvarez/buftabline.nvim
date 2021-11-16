@@ -1,4 +1,5 @@
 local b = require("buftabline.buffers")
+local t = require("buftabline.tabpages")
 local o = require("buftabline.options")
 local h = require("buftabline.highlights")
 
@@ -51,7 +52,8 @@ M.toggle_tabline = function()
 end
 
 M.check_auto_hide = vim.schedule_wrap(function()
-    vim.o.showtabline = #b.getbufinfo() > 1 and 2 or 0
+    local should_show = #b.getbufinfo() > 1 or #t.tabinfo() > 1
+    vim.o.showtabline = should_show and 2 or 0
 end)
 
 M.reset_icon_colors = vim.schedule_wrap(function()

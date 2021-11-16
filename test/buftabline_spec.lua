@@ -17,7 +17,7 @@ local close_all = function()
 end
 
 local assert_tabline = function(expected)
-    assert.equals(expected, vim.trim(build()))
+    assert.equals(vim.trim(build()), expected)
 end
 
 local assert_current = function(name)
@@ -56,6 +56,7 @@ describe("buftabline", function()
 
         it("should skip no name buffer", function()
             edit_mock_files(3)
+
             vim.cmd("enew")
 
             assert_tabline("%#TabLineFill# 1: test1.lua %*%#TabLineFill# 2: test2.lua %*%#TabLineFill# 3: test3.lua %*")
@@ -64,6 +65,7 @@ describe("buftabline", function()
         it("should truncate last tab to fit budget", function()
             vim.opt.columns = 32
             edit_mock_files(3)
+
             -- go to previous buffer to truncate last
             vim.cmd("b#")
 
@@ -72,9 +74,40 @@ describe("buftabline", function()
 
         it("should disambiguate same name tabs", function()
             edit_mock_files(1)
+
             vim.cmd("e " .. vim.fn.getcwd() .. "/test/test1.lua")
 
             assert_tabline("%#TabLineFill# 1: buftabline.nvim/test1.lua %*%#TabLineSel# 2: test/test1.lua %*")
+        end)
+    end)
+
+    describe("tabpage tabs", function()
+        it("should show open tabpage tabs", function()
+            edit_mock_files(1)
+
+            vim.cmd("tabnew")
+
+            assert_tabline(
+                "%#TabLineFill# 1: test1.lua %*                                                            %#TabLineFill# 1 %*%#TabLineSel# 2 %*"
+            )
+        end)
+
+        it("should show open tabpage tabs on left if set", function()
+            o.set({ tabpage_position = "left" })
+            edit_mock_files(1)
+
+            vim.cmd("tabnew")
+
+            assert_tabline("%#TabLineFill# 1 %*%#TabLineSel# 2 %*%#TabLineFill# 1: test1.lua %*")
+        end)
+
+        it("should not show tabpage tabs if disabled", function()
+            o.set({ show_tabpages = false })
+            edit_mock_files(1)
+
+            vim.cmd("tabnew")
+
+            assert_tabline("%#TabLineFill# 1: test1.lua %*")
         end)
     end)
 
@@ -129,6 +162,24 @@ describe("buftabline", function()
 
             assert_tabline("%#TabLineSel# 1: test1.lua %*%#MockHl#          %*")
         end)
+
+        it("should apply tabpage_current highlight", function()
+            o.set({ hlgroups = { tabpage_current = "MockHl" } })
+            edit_mock_files(1)
+
+            vim.cmd("tabnew")
+
+            assert_tabline("%#TabLineFill# 1: test1.lua %*    %#TabLineFill# 1 %*%#MockHl# 2 %*")
+        end)
+
+        it("should apply tabpage_normal highlight", function()
+            o.set({ hlgroups = { tabpage_normal = "MockHl" } })
+            edit_mock_files(1)
+
+            vim.cmd("tabnew")
+
+            assert_tabline("%#TabLineFill# 1: test1.lua %*    %#MockHl# 1 %*%#TabLineSel# 2 %*")
+        end)
     end)
 
     describe("auto_hide", function()
@@ -137,7 +188,7 @@ describe("buftabline", function()
             require("buftabline").setup()
         end)
 
-        it("should hide tabline if only one tab is open", function()
+        it("should hide tabline if only one buffer is open", function()
             edit_mock_files(1)
 
             vim.wait(0)
@@ -145,7 +196,7 @@ describe("buftabline", function()
             assert.equals(0, vim.o.showtabline)
         end)
 
-        it("should show tabline if more than one tab is open", function()
+        it("should show tabline if more than one buffer is open", function()
             edit_mock_files(2)
 
             vim.wait(0)
@@ -153,13 +204,21 @@ describe("buftabline", function()
             assert.equals(2, vim.o.showtabline)
         end)
 
-        it("should hide on buffer close if only one tab is left", function()
+        it("should hide on buffer close if only one buffer is left", function()
             edit_mock_files(2)
 
             vim.cmd("bdelete")
             vim.wait(0)
 
             assert.equals(0, vim.o.showtabline)
+        end)
+
+        it("should show tabline if more than one tab is open", function()
+            vim.cmd("tabnew")
+
+            vim.wait(0)
+
+            assert.equals(2, vim.o.showtabline)
         end)
     end)
 
