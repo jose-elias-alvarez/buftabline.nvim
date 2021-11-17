@@ -32,7 +32,12 @@ M.next_buffer = function()
         return
     end
 
-    local next = b.get_current_index() + 1
+    local current = b.get_current_index()
+    if not current then
+        return
+    end
+
+    local next = current + 1
     buftarget(b.get_numbers()[next] and next or 1, "buffer")
 end
 
@@ -42,7 +47,12 @@ M.prev_buffer = function()
         return
     end
 
-    local prev = b.get_current_index() - 1
+    local current = b.get_current_index()
+    if not current then
+        return
+    end
+
+    local prev = current - 1
     local numbers = b.get_numbers()
     buftarget(numbers[prev] and prev or #numbers, "buffer")
 end
