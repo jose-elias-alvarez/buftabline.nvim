@@ -7,9 +7,9 @@ local defaults = {
     disable_commands = false,
     go_to_maps = true,
     flags = {
-        modified = "[+]",
-        not_modifiable = "[-]",
-        readonly = "[RO]",
+        modified = " [+]",
+        not_modifiable = " [-]",
+        readonly = " [RO]",
     },
     hlgroups = {
         current = "TabLineSel",
