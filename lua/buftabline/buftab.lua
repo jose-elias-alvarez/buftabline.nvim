@@ -32,7 +32,7 @@ function Buftab:generate_flags()
         table.insert(buffer_flags, flags.readonly)
     end
     if vim.tbl_count(buffer_flags) > 0 then
-        table.insert(buffer_flags, 1, " ")
+        table.insert(buffer_flags, 1, "")
     end
     self.flags = table.concat(buffer_flags)
 end
