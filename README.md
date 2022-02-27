@@ -4,6 +4,18 @@
 }
 -->
 
+# ARCHIVED
+
+I'm no longer using buftabline.nvim and don't plan on updating it, so I'm
+archiving this repository. I found that I was spending too much of my time
+_managing_ my open buffers (something Vim doesn't want you to do) and that using
+standard tabpages and switching buffers via Telescope / FZF vastly sped up my
+editing. Adjusting to this workflow took time, but I recommend trying it before
+resorting to a buffer tabline plugin like this one.
+
+To my knowledge, everything in this plugin works, so if it fits your needs, feel
+free to use it as-is or fork it.
+
 # buftabline.nvim
 
 A low-config, minimalistic buffer tabline Neovim plugin written in Lua,
